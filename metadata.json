@@ -1,0 +1,10 @@
+{
+  "name": "FlotteMaestro - Fleet Management Platform",
+  "description": "Multi-tenant fleet management platform with real-time GPS synchronization, web admin dashboard, REST API explorer, and mobile fleet application.",
+  "requestFramePermissions": [
+    "geolocation"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
