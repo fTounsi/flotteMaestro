@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @layer base {
   :root {
     --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -11,6 +13,13 @@
     font-family: var(--font-sans);
     background-color: #080808;
     color: #f4f4f5;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  html.light body,
+  [data-theme="light"] body {
+    background-color: #f8fafc;
+    color: #0f172a;
   }
 
   [dir="rtl"] {
@@ -18,10 +27,10 @@
   }
 }
 
-/* Custom Scrollbars - Artistic Flair */
+/* Custom Scrollbars */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
   background: #080808;
@@ -32,6 +41,19 @@
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #3f3f46;
+}
+
+html.light ::-webkit-scrollbar-track,
+[data-theme="light"] ::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+html.light ::-webkit-scrollbar-thumb,
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+}
+html.light ::-webkit-scrollbar-thumb:hover,
+[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
 /* Glowing Emerald Pulses */
@@ -54,12 +76,56 @@
   animation: tracker-pulse 2s infinite;
 }
 
-/* Leaflet container styling with Obsidian Black theme */
+/* Leaflet container styling */
 .leaflet-container {
   width: 100%;
   height: 100%;
   background: #080808 !important;
   font-family: inherit;
+  z-index: 0 !important;
+  isolation: isolate;
+}
+
+html.light .leaflet-container,
+[data-theme="light"] .leaflet-container {
+  background: #f8fafc !important;
+}
+
+.leaflet-pane {
+  z-index: 10 !important;
+}
+
+.leaflet-tile-pane {
+  z-index: 1 !important;
+}
+
+.leaflet-overlay-pane {
+  z-index: 10 !important;
+}
+
+.leaflet-shadow-pane {
+  z-index: 12 !important;
+}
+
+.leaflet-marker-pane {
+  z-index: 15 !important;
+}
+
+.leaflet-tooltip-pane {
+  z-index: 20 !important;
+}
+
+.leaflet-popup-pane {
+  z-index: 25 !important;
+}
+
+.leaflet-control {
+  z-index: 30 !important;
+}
+
+.leaflet-top,
+.leaflet-bottom {
+  z-index: 30 !important;
 }
 
 .leaflet-popup-content-wrapper {
@@ -71,6 +137,14 @@
   padding: 0 !important;
 }
 
+html.light .leaflet-popup-content-wrapper,
+[data-theme="light"] .leaflet-popup-content-wrapper {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+}
+
 .leaflet-popup-content {
   margin: 14px 16px !important;
   line-height: 1.5 !important;
@@ -79,4 +153,22 @@
 .leaflet-popup-tip {
   background: #18181b !important;
   border: 1px solid #27272a !important;
+}
+
+html.light .leaflet-popup-tip,
+[data-theme="light"] .leaflet-popup-tip {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+.leaflet-cluster-spider-leg {
+  stroke: #10b981 !important;
+  stroke-width: 2 !important;
+  stroke-dasharray: 4, 4 !important;
+  opacity: 0.8 !important;
+}
+
+.custom-fleet-cluster-icon {
+  background: transparent !important;
+  border: none !important;
 }

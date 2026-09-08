@@ -106,11 +106,16 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
     twoFactorEnabled: false
   });
 
+  const isSuperAdmin = currentUser?.role === 'super_admin' || currentUser?.role === 'support_admin';
   const canManageUsers = userHasPermission(currentUser, 'users:manage');
   const canEditRbac = userHasPermission(currentUser, 'rbac:matrix_edit');
 
-  // Filtered Users
-  const filteredUsers = users.filter((u) => {
+  // Filtered Users: Non-super-admins strictly restricted to their own assigned organization
+  const visibleBaseUsers = isSuperAdmin
+    ? users
+    : users.filter((u) => u.organizationId === currentUser?.organizationId);
+
+  const filteredUsers = visibleBaseUsers.filter((u) => {
     const matchesSearch =
       u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       u.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -126,7 +131,9 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
     e.preventDefault();
     if (!formData.name || !formData.email) return;
 
-    const org = organizations.find((o) => o.id === formData.organizationId);
+    // Super Admin can choose organization; non-super-admin is locked to own org
+    const targetOrgId = isSuperAdmin ? formData.organizationId : (currentUser?.organizationId || formData.organizationId);
+    const org = organizations.find((o) => o.id === targetOrgId);
 
     const newUser: User = {
       id: `usr_${Date.now().toString(36)}`,
@@ -134,8 +141,8 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
       email: formData.email.trim().toLowerCase(),
       phone: formData.phone.trim() || '+212 660 00 00 00',
       role: formData.role,
-      organizationId: formData.organizationId,
-      organizationName: org ? org.name : 'Atlas Express Logistics',
+      organizationId: targetOrgId,
+      organizationName: org ? org.name : (currentUser?.organizationName || 'Atlas Express Logistics'),
       department: formData.department,
       status: 'active',
       demoPin: formData.demoPin,
@@ -157,7 +164,7 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
       action: 'USER_CREATED',
       category: 'rbac',
       severity: 'info',
-      description: `Created new user account for ${newUser.name} (${newUser.email}) with role ${newUser.role}.`,
+      description: `Created new user account for ${newUser.name} (${newUser.email}) with role ${newUser.role} in organization "${newUser.organizationName}".`,
       ipAddress: '196.12.44.89',
       targetEntity: newUser.id
     };
@@ -169,7 +176,7 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
       email: '',
       phone: '',
       role: 'fleet_manager',
-      organizationId: organizations[0]?.id || 'org_atlas_logistics',
+      organizationId: isSuperAdmin ? (organizations[0]?.id || 'org_atlas_logistics') : (currentUser?.organizationId || 'org_atlas_logistics'),
       department: 'Fleet Dispatch',
       demoPin: Math.floor(1000 + Math.random() * 9000).toString(),
       twoFactorEnabled: false
@@ -180,7 +187,15 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
   const handleSaveEdit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingUser) return;
-    onUpdateUser(editingUser);
+
+    // Resolve organization if updated by Super Admin
+    const targetOrg = organizations.find((o) => o.id === editingUser.organizationId);
+    const updatedUserWithOrg: User = {
+      ...editingUser,
+      organizationName: targetOrg ? targetOrg.name : editingUser.organizationName
+    };
+
+    onUpdateUser(updatedUserWithOrg);
 
     const log: AuditLogEntry = {
       id: `aud_${Date.now()}`,
@@ -191,7 +206,7 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
       action: 'USER_UPDATED',
       category: 'rbac',
       severity: 'info',
-      description: `Updated profile & credentials for user ${editingUser.name}.`,
+      description: `Updated profile & assigned organization for user ${editingUser.name} (${updatedUserWithOrg.organizationName}).`,
       ipAddress: '196.12.44.89',
       targetEntity: editingUser.id
     };
@@ -511,19 +526,26 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
                   <option value="viewer">Read-Only Viewer</option>
                 </select>
 
-                {/* Organization Filter */}
-                <select
-                  value={filterOrg}
-                  onChange={(e) => setFilterOrg(e.target.value)}
-                  className="bg-zinc-950 border border-zinc-800 rounded-2xl px-3 py-2 text-xs text-zinc-300 focus:outline-none focus:border-zinc-700"
-                >
-                  <option value="all">All Organizations</option>
-                  {organizations.map((o) => (
-                    <option key={o.id} value={o.id}>
-                      {o.name}
-                    </option>
-                  ))}
-                </select>
+                {/* Organization Filter (Super Admin can filter any org, regular user is scoped to own org) */}
+                {isSuperAdmin ? (
+                  <select
+                    value={filterOrg}
+                    onChange={(e) => setFilterOrg(e.target.value)}
+                    className="bg-zinc-950 border border-zinc-800 rounded-2xl px-3 py-2 text-xs text-zinc-300 focus:outline-none focus:border-zinc-700"
+                  >
+                    <option value="all">All Organizations ({organizations.length})</option>
+                    {organizations.map((o) => (
+                      <option key={o.id} value={o.id}>
+                        {o.name}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <div className="bg-zinc-950 border border-zinc-800 rounded-2xl px-3 py-2 text-xs text-emerald-400 font-semibold flex items-center gap-1.5">
+                    <Building2 className="w-3 h-3" />
+                    <span>{currentUser?.organizationName || 'My Organization'}</span>
+                  </div>
+                )}
 
                 {/* Status Filter */}
                 <select
@@ -1079,20 +1101,32 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-[11px] uppercase font-bold text-zinc-400 mb-1">
-                    Organization *
+                  <label className="block text-[11px] uppercase font-bold text-zinc-400 mb-1 flex items-center justify-between">
+                    <span>Assigned Organization *</span>
+                    {!isSuperAdmin && (
+                      <span className="text-[9px] text-emerald-400 font-mono font-bold flex items-center gap-1">
+                        <Lock className="w-2.5 h-2.5" /> Locked
+                      </span>
+                    )}
                   </label>
-                  <select
-                    value={formData.organizationId}
-                    onChange={(e) => setFormData({ ...formData, organizationId: e.target.value })}
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-2xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500"
-                  >
-                    {organizations.map((org) => (
-                      <option key={org.id} value={org.id}>
-                        {org.name}
-                      </option>
-                    ))}
-                  </select>
+                  {isSuperAdmin ? (
+                    <select
+                      value={formData.organizationId}
+                      onChange={(e) => setFormData({ ...formData, organizationId: e.target.value })}
+                      className="w-full bg-zinc-950 border border-purple-500/40 rounded-2xl px-4 py-2.5 text-purple-200 font-semibold focus:outline-none focus:border-purple-500"
+                    >
+                      {organizations.map((org) => (
+                        <option key={org.id} value={org.id} className="bg-zinc-950 text-white">
+                          {org.name} ({org.city})
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <div className="w-full bg-zinc-950/80 border border-zinc-800 rounded-2xl px-4 py-2.5 text-zinc-300 font-medium flex items-center justify-between">
+                      <span className="truncate">{currentUser?.organizationName || 'Atlas Express Logistics'}</span>
+                      <Lock className="w-3.5 h-3.5 text-zinc-500 shrink-0" />
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -1235,6 +1269,44 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
                 </div>
 
                 <div>
+                  <label className="block text-[11px] uppercase font-bold text-zinc-400 mb-1 flex items-center justify-between">
+                    <span>Assigned Organization</span>
+                    {!isSuperAdmin && (
+                      <span className="text-[9px] text-zinc-500 font-mono flex items-center gap-1">
+                        <Lock className="w-2.5 h-2.5" /> Read-Only
+                      </span>
+                    )}
+                  </label>
+                  {isSuperAdmin ? (
+                    <select
+                      value={editingUser.organizationId}
+                      onChange={(e) => {
+                        const targetOrg = organizations.find((o) => o.id === e.target.value);
+                        setEditingUser({
+                          ...editingUser,
+                          organizationId: e.target.value,
+                          organizationName: targetOrg ? targetOrg.name : editingUser.organizationName
+                        });
+                      }}
+                      className="w-full bg-zinc-950 border border-purple-500/40 rounded-2xl px-4 py-2.5 text-purple-200 font-semibold focus:outline-none focus:border-purple-500"
+                    >
+                      {organizations.map((org) => (
+                        <option key={org.id} value={org.id} className="bg-zinc-950 text-white">
+                          {org.name} ({org.city})
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <div className="w-full bg-zinc-950/80 border border-zinc-800 rounded-2xl px-4 py-2.5 text-zinc-300 font-medium flex items-center justify-between">
+                      <span className="truncate">{editingUser.organizationName}</span>
+                      <Lock className="w-3.5 h-3.5 text-zinc-500 shrink-0" />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
                   <label className="block text-[11px] uppercase font-bold text-zinc-400 mb-1">
                     Demo Security PIN
                   </label>
@@ -1244,6 +1316,19 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
                     value={editingUser.demoPin || '1234'}
                     onChange={(e) => setEditingUser({ ...editingUser, demoPin: e.target.value })}
                     className="w-full bg-zinc-950 border border-zinc-800 rounded-2xl px-4 py-2.5 font-mono text-emerald-400 font-bold focus:outline-none focus:border-emerald-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] uppercase font-bold text-zinc-400 mb-1">
+                    Department
+                  </label>
+                  <input
+                    type="text"
+                    value={editingUser.department || 'Operations'}
+                    onChange={(e) => setEditingUser({ ...editingUser, department: e.target.value })}
+                    placeholder="e.g. Operations / Logistics"
+                    className="w-full bg-zinc-950 border border-zinc-800 rounded-2xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500"
                   />
                 </div>
               </div>

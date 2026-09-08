@@ -16,6 +16,7 @@ export const INITIAL_ORGANIZATIONS: Organization[] = [
     id: 'org_oasis_car_rental',
     name: 'Oasis Rent-a-Car Morocco',
     legalName: 'Oasis Car Hire & Mobility SARL',
+    types: ['Rental agency'],
     email: 'booking@oasisrentacar.ma',
     phone: '+212 522 99 11 22',
     country: 'Morocco',
@@ -50,7 +51,8 @@ export const INITIAL_ORGANIZATIONS: Organization[] = [
       fuel_intelligence: true,
       cold_chain: false,
       live_sharing: true,
-      predictive_maintenance: true
+      predictive_maintenance: true,
+      billing: false
     },
     createdAt: '2026-02-01T08:00:00Z'
   },
@@ -58,6 +60,7 @@ export const INITIAL_ORGANIZATIONS: Organization[] = [
     id: 'org_atlas_logistics',
     name: 'Atlas Express Logistics',
     legalName: 'Atlas Express Logistics SARL',
+    types: ['Transport company'],
     email: 'contact@atlas-logistics.ma',
     phone: '+212 522 45 89 00',
     country: 'Morocco',
@@ -92,7 +95,8 @@ export const INITIAL_ORGANIZATIONS: Organization[] = [
       fuel_intelligence: true,
       cold_chain: false,
       live_sharing: true,
-      predictive_maintenance: true
+      predictive_maintenance: true,
+      billing: true
     },
     createdAt: '2026-01-01T09:00:00Z'
   },
@@ -100,6 +104,7 @@ export const INITIAL_ORGANIZATIONS: Organization[] = [
     id: 'org_med_cargo',
     name: 'Tanger Med Cold Chain',
     legalName: 'Tanger Maritime Reefer Transport SA',
+    types: ['Transport company', 'Other'],
     email: 'ops@tangermedreefer.ma',
     phone: '+212 539 94 12 30',
     country: 'Morocco',
@@ -134,7 +139,8 @@ export const INITIAL_ORGANIZATIONS: Organization[] = [
       fuel_intelligence: true,
       cold_chain: true,
       live_sharing: true,
-      predictive_maintenance: true
+      predictive_maintenance: true,
+      billing: true
     },
     createdAt: '2026-03-01T08:30:00Z'
   },
@@ -142,6 +148,7 @@ export const INITIAL_ORGANIZATIONS: Organization[] = [
     id: 'org_sahara_distribution',
     name: 'Sahara Distribution Services',
     legalName: 'Sahara Express Cargo SARL',
+    types: ['Transport company'],
     email: 'direction@saharadistrib.ma',
     phone: '+212 528 84 77 11',
     country: 'Morocco',
@@ -176,7 +183,8 @@ export const INITIAL_ORGANIZATIONS: Organization[] = [
       fuel_intelligence: true,
       cold_chain: false,
       live_sharing: false,
-      predictive_maintenance: false
+      predictive_maintenance: false,
+      billing: false
     },
     createdAt: '2026-06-01T10:00:00Z'
   }
@@ -1338,12 +1346,40 @@ export const INITIAL_USERS: User[] = [
     name: 'Rachid El Amrani',
     email: 'r.amrani@flottemaestro.ma',
     phone: '+212 661 23 45 67',
-    role: 'viewer',
+    role: 'driver',
     status: 'active',
     avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=120&auto=format&fit=crop&q=80',
     demoPin: '1234',
     lastLoginAt: new Date().toISOString(),
     createdAt: '2026-01-15T08:00:00Z'
+  },
+  {
+    id: 'usr_oasis_01',
+    organizationId: 'org_oasis_car_rental',
+    organizationName: 'Oasis Luxury Car Rental',
+    name: 'Amine Tazi',
+    email: 'a.tazi@oasisrent.ma',
+    phone: '+212 660 12 34 56',
+    role: 'org_owner',
+    status: 'active',
+    avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&auto=format&fit=crop&q=80',
+    demoPin: '7777',
+    lastLoginAt: new Date().toISOString(),
+    createdAt: '2026-02-01T09:00:00Z'
+  },
+  {
+    id: 'usr_med_01',
+    organizationId: 'org_med_cargo',
+    organizationName: 'Med Cargo Inter-Afrique',
+    name: 'Hassan Ouazzani',
+    email: 'h.ouazzani@medcargo.ma',
+    phone: '+212 664 99 11 22',
+    role: 'org_owner',
+    status: 'active',
+    avatarUrl: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=120&auto=format&fit=crop&q=80',
+    demoPin: '8888',
+    lastLoginAt: new Date().toISOString(),
+    createdAt: '2026-03-01T11:00:00Z'
   }
 ];
 

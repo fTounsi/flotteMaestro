@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { Radio, Plus, ShieldCheck, Battery, Zap, Link, Unlink, Search, Smartphone, Cpu, X } from 'lucide-react';
-import { Tracker, Vehicle } from '../../types/fleet';
+import { Radio, Plus, ShieldCheck, Battery, Zap, Link, Unlink, Search, Smartphone, Cpu, X, Lock, Activity } from 'lucide-react';
+import { Tracker, Vehicle, User } from '../../types/fleet';
 import { TranslationDictionary } from '../../translations/i18n';
+import { userHasPermission } from '../../types/rbac';
 
 interface TrackersViewProps {
   trackers: Tracker[];
   vehicles: Vehicle[];
+  currentUser?: User | null;
   onAddTracker: (tracker: Partial<Tracker>) => void;
   onAssignTracker: (trackerId: string, vehicleId: string) => void;
   t: TranslationDictionary;
@@ -14,10 +16,12 @@ interface TrackersViewProps {
 export const TrackersView: React.FC<TrackersViewProps> = ({
   trackers,
   vehicles,
+  currentUser,
   onAddTracker,
   onAssignTracker,
   t
 }) => {
+  const canManageTrackers = userHasPermission(currentUser, 'trackers:manage');
   const [searchTerm, setSearchTerm] = useState('');
   const [filterProtocol, setFilterProtocol] = useState('all');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -97,23 +101,40 @@ export const TrackersView: React.FC<TrackersViewProps> = ({
         </div>
 
         <div className="md:col-span-4 flex flex-col gap-4">
-          <div
-            onClick={() => setIsAddModalOpen(true)}
-            className="bg-white text-black rounded-[32px] p-6 flex flex-col justify-between hover:bg-emerald-400 transition-all cursor-pointer shadow-2xl flex-1 group"
-          >
-            <div className="flex justify-between items-start">
-              <p className="text-[10px] uppercase tracking-widest font-black">Provisioning</p>
-              <Plus className="w-5 h-5 group-hover:scale-125 transition-transform" />
+          {canManageTrackers ? (
+            <div
+              onClick={() => setIsAddModalOpen(true)}
+              className="bg-white text-black rounded-[32px] p-6 flex flex-col justify-between hover:bg-emerald-400 transition-all cursor-pointer shadow-2xl flex-1 group"
+            >
+              <div className="flex justify-between items-start">
+                <p className="text-[10px] uppercase tracking-widest font-black">Provisioning</p>
+                <Plus className="w-5 h-5 group-hover:scale-125 transition-transform" />
+              </div>
+              <div>
+                <h4 className="text-xl font-black leading-tight tracking-tight">
+                  {t.actions.addTracker}
+                </h4>
+                <p className="text-[11px] text-zinc-700 mt-1 font-medium">
+                  Register Teltonika / Coban IMEI
+                </p>
+              </div>
             </div>
-            <div>
-              <h4 className="text-xl font-black leading-tight tracking-tight">
-                {t.actions.addTracker}
-              </h4>
-              <p className="text-[11px] text-zinc-700 mt-1 font-medium">
-                Register Teltonika / Coban IMEI
-              </p>
+          ) : (
+            <div className="bg-zinc-900/40 rounded-[32px] p-6 border border-zinc-800 flex flex-col justify-between shadow-2xl flex-1">
+              <div className="flex justify-between items-start">
+                <p className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold">Hardware Status</p>
+                <Activity className="w-4 h-4 text-emerald-400" />
+              </div>
+              <div>
+                <h4 className="text-lg font-black text-white leading-tight">
+                  Telemetry Gateway
+                </h4>
+                <p className="text-[11px] text-zinc-400 mt-1">
+                  100% Signal Integrity across all active gateways
+                </p>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
 
@@ -186,14 +207,16 @@ export const TrackersView: React.FC<TrackersViewProps> = ({
                     <span className="font-mono font-bold text-emerald-400 bg-zinc-900 px-2 py-0.5 rounded-lg border border-zinc-800">
                       Paired: {trk.vehiclePlate}
                     </span>
-                    <button
-                      onClick={() => onAssignTracker(trk.id, '')}
-                      className="text-zinc-500 hover:text-rose-400 text-[10px] font-bold underline"
-                    >
-                      Unbind
-                    </button>
+                    {canManageTrackers && (
+                      <button
+                        onClick={() => onAssignTracker(trk.id, '')}
+                        className="text-zinc-500 hover:text-rose-400 text-[10px] font-bold underline"
+                      >
+                        Unbind
+                      </button>
+                    )}
                   </div>
-                ) : (
+                ) : canManageTrackers ? (
                   <div className="w-full flex items-center gap-2">
                     <select
                       aria-label="Pair Vehicle"
@@ -208,6 +231,8 @@ export const TrackersView: React.FC<TrackersViewProps> = ({
                       ))}
                     </select>
                   </div>
+                ) : (
+                  <span className="text-[11px] text-zinc-500 font-mono italic">Unassigned hardware unit</span>
                 )}
               </div>
             </div>

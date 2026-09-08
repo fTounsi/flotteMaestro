@@ -26,11 +26,15 @@ import {
   Snowflake,
   Share2,
   Wrench,
-  Sliders
+  Sliders,
+  PanelLeftClose,
+  PanelLeftOpen,
+  Menu
 } from 'lucide-react';
 import { Language, TranslationDictionary } from '../../translations/i18n';
 import { Organization, AppMode, NavigationTab, User } from '../../types/fleet';
 import { userHasPermission } from '../../types/rbac';
+import { ThemeToggle } from './ThemeToggle';
 
 interface HeaderProps {
   appMode: AppMode;
@@ -51,6 +55,8 @@ interface HeaderProps {
   onLogout: () => void;
   isLoginPreview: boolean;
   onToggleLoginPreview: () => void;
+  isSidebarCollapsed?: boolean;
+  onToggleSidebar?: () => void;
   t: TranslationDictionary;
 }
 
@@ -73,150 +79,114 @@ export const Header: React.FC<HeaderProps> = ({
   onLogout,
   isLoginPreview,
   onToggleLoginPreview,
+  isSidebarCollapsed = false,
+  onToggleSidebar,
   t
 }) => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const activeOrg = organizations.find((o) => o.id === selectedOrgId) || organizations[0];
-  const enabledModules = activeOrg.enabledModules || {
-    car_rental: false,
-    fuel_intelligence: true,
-    cold_chain: false,
-    live_sharing: false,
-    predictive_maintenance: false
-  };
-
-  interface NavItem {
-    id: NavigationTab;
-    label: string;
-    icon: React.ReactNode;
-    isAddon?: boolean;
-    badge?: string;
-  }
-
-  const baseNavItems: NavItem[] = [
-    { id: 'live_tracking', label: t.nav.liveTracking, icon: <Navigation className="w-3.5 h-3.5" /> },
-    { id: 'trips', label: t.nav.trips, icon: <Calendar className="w-3.5 h-3.5" /> },
-    { id: 'trackers', label: t.nav.trackers, icon: <Cpu className="w-3.5 h-3.5" /> },
-    { id: 'geofences', label: t.nav.geofences, icon: <Shield className="w-3.5 h-3.5" /> },
-    { id: 'alerts', label: t.nav.alerts, icon: <Bell className="w-3.5 h-3.5" /> },
-    { id: 'reports', label: t.nav.reports, icon: <FileText className="w-3.5 h-3.5" /> }
-  ];
-
-  // Dynamic modules unlocked for the active tenant
-  const moduleNavItems: NavItem[] = [];
-
-  if (enabledModules.car_rental) {
-    moduleNavItems.push({
-      id: 'car_rental',
-      label: 'Car Rental & Relay',
-      icon: <KeyRound className="w-3.5 h-3.5 text-amber-400" />,
-      badge: 'Rental'
-    });
-  }
-  if (enabledModules.fuel_intelligence) {
-    moduleNavItems.push({
-      id: 'fuel_intelligence',
-      label: 'Fuel Intelligence',
-      icon: <Fuel className="w-3.5 h-3.5 text-rose-400" />,
-      badge: 'Fuel'
-    });
-  }
-  if (enabledModules.cold_chain) {
-    moduleNavItems.push({
-      id: 'cold_chain',
-      label: 'Cold-Chain & HACCP',
-      icon: <Snowflake className="w-3.5 h-3.5 text-blue-400" />,
-      badge: 'Cold'
-    });
-  }
-  if (enabledModules.live_sharing) {
-    moduleNavItems.push({
-      id: 'live_sharing',
-      label: 'Live ETA Sharing',
-      icon: <Share2 className="w-3.5 h-3.5 text-indigo-400" />,
-      badge: 'ETA'
-    });
-  }
-  if (enabledModules.predictive_maintenance) {
-    moduleNavItems.push({
-      id: 'predictive_maintenance',
-      label: 'Predictive Maintenance',
-      icon: <Wrench className="w-3.5 h-3.5 text-amber-400" />,
-      badge: 'OBD-II'
-    });
-  }
-
-  const managementNavItems: NavItem[] = [];
-
-  // Modules hub
-  managementNavItems.push({ id: 'modules_hub', label: 'Feature Modules', icon: <Boxes className="w-3.5 h-3.5 text-indigo-400" /> });
-
-  // Organizations (Only Super Admin, Support Admin, Org Owner)
-  if (currentUser?.role === 'super_admin' || currentUser?.role === 'support_admin' || currentUser?.role === 'org_owner') {
-    managementNavItems.push({ id: 'organizations', label: t.nav.organizations, icon: <Building2 className="w-3.5 h-3.5" /> });
-  }
-
-  // Users & RBAC
-  if (userHasPermission(currentUser, 'users:view')) {
-    managementNavItems.push({ id: 'users', label: t.nav.usersRbac, icon: <Users className="w-3.5 h-3.5" /> });
-  }
-
-  // Traccar System Settings
-  if (userHasPermission(currentUser, 'system:settings')) {
-    managementNavItems.push({ id: 'settings', label: 'System Parameters', icon: <Sliders className="w-3.5 h-3.5 text-cyan-400" />, badge: 'Traccar' });
-  }
-
-  const allNavItems: NavItem[] = [...baseNavItems, ...moduleNavItems, ...managementNavItems];
 
   return (
-    <header className="bg-[#080808]/95 backdrop-blur-2xl border-b border-zinc-900 sticky top-0 z-50 text-white select-none">
+    <header className="bg-white/95 dark:bg-[#080808]/95 backdrop-blur-2xl border-b border-slate-200 dark:border-zinc-900 sticky top-0 z-[100] text-slate-900 dark:text-white select-none transition-colors duration-200">
       {/* Top Banner Row */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-8 pt-4 pb-3 flex flex-wrap items-center justify-between gap-4">
-        {/* Artistic Brand Header */}
-        <div className="flex items-center gap-4">
+      <div className="w-full px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-4">
+        {/* Artistic Brand Header & Sidebar Toggle */}
+        <div className="flex items-center gap-3.5">
+          {/* Vertical Navigation Toggle Button for Web Mode */}
+          {appMode === 'web' && isAuthenticated && !isLoginPreview && onToggleSidebar && (
+            <button
+              id="header-sidebar-toggle-btn"
+              onClick={onToggleSidebar}
+              title={isSidebarCollapsed ? 'Expand Navigation Menu' : 'Collapse Navigation Menu'}
+              className="flex items-center justify-center p-2 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 dark:bg-zinc-900/90 dark:hover:bg-zinc-800 dark:border-zinc-800 text-slate-700 dark:text-zinc-300 hover:text-slate-900 dark:hover:text-white transition-all shadow-xs group"
+            >
+              {isSidebarCollapsed ? (
+                <PanelLeftOpen className="w-4 h-4 text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform" />
+              ) : (
+                <PanelLeftClose className="w-4 h-4 text-slate-500 dark:text-zinc-400 group-hover:scale-110 transition-transform" />
+              )}
+            </button>
+          )}
+
           <div className="flex flex-col">
             <div className="flex items-center gap-2.5">
-              <h1 className="text-2xl sm:text-3xl font-black tracking-tighter leading-none italic uppercase">
-                FLOTTE<span className="text-zinc-600">MAESTRO</span>
+              <h1 className="text-xl sm:text-2xl font-black tracking-tighter leading-none italic uppercase text-slate-900 dark:text-white">
+                FLOTTE<span className="text-slate-400 dark:text-zinc-600">MAESTRO</span>
               </h1>
-              <div className="h-9 w-9 rounded-full border border-zinc-800 flex items-center justify-center bg-zinc-900/80 shadow-inner">
-                <div className="h-2.5 w-2.5 bg-emerald-500 rounded-full shadow-[0_0_8px_#10b981] animate-pulse" />
+              <div className="h-8 w-8 rounded-full border border-slate-200 dark:border-zinc-800 flex items-center justify-center bg-slate-100 dark:bg-zinc-900/80 shadow-inner">
+                <div className="h-2 w-2 bg-emerald-500 rounded-full shadow-[0_0_8px_#10b981] animate-pulse" />
               </div>
             </div>
-            <p className="text-[9px] tracking-[0.35em] uppercase text-zinc-500 mt-1.5 font-bold">
+            <p className="text-[8px] tracking-[0.3em] uppercase text-slate-500 dark:text-zinc-500 mt-1 font-bold">
               The Architecture of Synchronization
             </p>
           </div>
 
-          {/* Active Tenant Dropdown */}
-          <div className="hidden lg:flex items-center gap-2 bg-zinc-900/50 hover:bg-zinc-900 border border-zinc-800 rounded-2xl px-3 py-1.5 transition-colors">
-            <Building2 className="w-3.5 h-3.5 text-zinc-400" />
-            <select
-              aria-label="Select Organization Tenant"
-              value={selectedOrgId}
-              onChange={(e) => onOrgChange(e.target.value)}
-              className="bg-transparent text-zinc-200 text-xs font-semibold focus:outline-none cursor-pointer pr-2"
-            >
-              {organizations.map((org) => (
-                <option key={org.id} value={org.id} className="bg-zinc-950 text-zinc-200">
-                  {org.name} ({org.city})
-                </option>
-              ))}
-            </select>
-            <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-bold">
-              {activeOrg.subscription.planName}
-            </span>
-          </div>
+          {/* Active Tenant / Organization Display (Super Admin Switcher vs Locked Assigned Org) */}
+          {(() => {
+            const isSuperAdmin = currentUser?.role === 'super_admin' || currentUser?.role === 'support_admin';
+
+            if (isSuperAdmin) {
+              return (
+                <div className="hidden lg:flex items-center gap-2 bg-purple-50 hover:bg-purple-100/80 border border-purple-200 dark:bg-purple-950/20 dark:hover:bg-purple-950/40 dark:border-purple-500/40 rounded-2xl px-3 py-1.5 transition-colors ml-2 shadow-xs">
+                  <Building2 className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400 shrink-0" />
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[9px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-purple-100 text-purple-800 border border-purple-300 dark:bg-purple-500/20 dark:text-purple-300 dark:border-purple-500/30">
+                      Super Admin
+                    </span>
+                    <select
+                      aria-label="Select Organization Tenant (Super Admin)"
+                      value={selectedOrgId}
+                      onChange={(e) => onOrgChange(e.target.value)}
+                      className="bg-transparent text-purple-950 dark:text-purple-200 text-xs font-bold focus:outline-none cursor-pointer pr-1"
+                    >
+                      {organizations.map((org) => (
+                        <option key={org.id} value={org.id} className="bg-white text-slate-900 dark:bg-zinc-950 dark:text-zinc-200">
+                          {org.name} ({org.city})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 font-bold">
+                    {activeOrg.subscription.planName}
+                  </span>
+                </div>
+              );
+            }
+
+            // For non-super-admins: Organization is locked to their affected/assigned organization
+            return (
+              <div
+                className="hidden lg:flex items-center gap-2 bg-slate-100 border border-slate-200 dark:bg-zinc-900/70 dark:border-zinc-800 rounded-2xl px-3 py-1.5 ml-2 shadow-xs"
+                title={`Assigned Organization: ${activeOrg.name} (${activeOrg.city}). Limited to your assigned tenant permissions.`}
+              >
+                <Building2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                <div className="flex items-center gap-1.5">
+                  <span className="text-slate-800 dark:text-zinc-200 text-xs font-bold truncate max-w-[170px]">
+                    {activeOrg.name}
+                  </span>
+                  <span className="text-[10px] text-slate-500 dark:text-zinc-500 font-mono">({activeOrg.city})</span>
+                </div>
+                <span className="text-[9px] uppercase font-mono font-bold px-1.5 py-0.5 rounded bg-slate-200 dark:bg-zinc-800 text-slate-700 dark:text-zinc-400 border border-slate-300 dark:border-zinc-700 flex items-center gap-1">
+                  <Lock className="w-2.5 h-2.5 text-emerald-600 dark:text-emerald-400" />
+                  <span>Assigned</span>
+                </span>
+                <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 font-bold">
+                  {activeOrg.subscription.planName}
+                </span>
+              </div>
+            );
+          })()}
         </div>
 
         {/* Mode Switcher Tabs (Web / Mobile / API) */}
-        <div className="flex items-center bg-zinc-900/60 p-1.5 rounded-2xl border border-zinc-800">
+        <div className="flex items-center bg-slate-100 dark:bg-zinc-900/60 p-1.5 rounded-2xl border border-slate-200 dark:border-zinc-800">
           <button
             onClick={() => onModeChange('web')}
             className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
               appMode === 'web'
-                ? 'bg-white text-black shadow-lg shadow-white/10'
-                : 'text-zinc-400 hover:text-white'
+                ? 'bg-white dark:bg-zinc-800 text-slate-900 dark:text-white shadow-xs'
+                : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             <Layers className="w-3.5 h-3.5" />
@@ -226,8 +196,8 @@ export const Header: React.FC<HeaderProps> = ({
             onClick={() => onModeChange('mobile')}
             className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
               appMode === 'mobile'
-                ? 'bg-white text-black shadow-lg shadow-white/10'
-                : 'text-zinc-400 hover:text-white'
+                ? 'bg-white dark:bg-zinc-800 text-slate-900 dark:text-white shadow-xs'
+                : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             <Smartphone className="w-3.5 h-3.5" />
@@ -237,8 +207,8 @@ export const Header: React.FC<HeaderProps> = ({
             onClick={() => onModeChange('api')}
             className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
               appMode === 'api'
-                ? 'bg-white text-black shadow-lg shadow-white/10'
-                : 'text-zinc-400 hover:text-white'
+                ? 'bg-white dark:bg-zinc-800 text-slate-900 dark:text-white shadow-xs'
+                : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             <Terminal className="w-3.5 h-3.5" />
@@ -255,7 +225,7 @@ export const Header: React.FC<HeaderProps> = ({
             className={`hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-2xl border text-xs font-semibold transition-all ${
               isLoginPreview
                 ? 'bg-emerald-500 border-emerald-400 text-black shadow-[0_0_12px_rgba(16,185,129,0.3)] font-bold'
-                : 'bg-zinc-900/60 border-zinc-800 text-zinc-300 hover:text-white hover:border-zinc-700'
+                : 'bg-slate-100 hover:bg-slate-200 border-slate-200 text-slate-700 hover:text-slate-900 dark:bg-zinc-900/60 dark:border-zinc-800 dark:text-zinc-300 dark:hover:text-white dark:hover:border-zinc-700'
             }`}
           >
             {isLoginPreview ? (
@@ -265,7 +235,7 @@ export const Header: React.FC<HeaderProps> = ({
               </>
             ) : (
               <>
-                <Lock className="w-3.5 h-3.5 text-emerald-400" />
+                <Lock className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                 <span>{t.auth.viewLoginPreview}</span>
               </>
             )}
@@ -276,18 +246,18 @@ export const Header: React.FC<HeaderProps> = ({
             onClick={onToggleSimulation}
             className={`hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-2xl border text-xs font-mono font-semibold transition-all ${
               isSimulating
-                ? 'bg-zinc-900 border-zinc-700 text-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.15)]'
-                : 'bg-zinc-950 border-zinc-800 text-zinc-500 hover:text-zinc-300'
+                ? 'bg-emerald-50 border-emerald-200 text-emerald-800 dark:bg-zinc-900 dark:border-zinc-700 dark:text-emerald-400 shadow-xs'
+                : 'bg-slate-100 border-slate-200 text-slate-500 hover:text-slate-800 dark:bg-zinc-950 dark:border-zinc-800 dark:text-zinc-500 dark:hover:text-zinc-300'
             }`}
           >
-            <div className={`h-2 w-2 rounded-full ${isSimulating ? 'bg-emerald-400 shadow-[0_0_6px_#10b981] animate-ping' : 'bg-zinc-600'}`} />
+            <div className={`h-2 w-2 rounded-full ${isSimulating ? 'bg-emerald-500 shadow-[0_0_6px_#10b981] animate-ping' : 'bg-slate-400 dark:bg-zinc-600'}`} />
             <span>{isSimulating ? 'GPS STREAM.ACTIVE' : 'STREAM.PAUSED'}</span>
           </button>
 
           {/* Alerts Bell */}
           <button
             onClick={() => onNavChange('alerts')}
-            className="relative p-2 rounded-2xl bg-zinc-900/60 hover:bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white transition-colors"
+            className="relative p-2 rounded-2xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 hover:text-slate-900 dark:bg-zinc-900/60 dark:hover:bg-zinc-900 dark:border-zinc-800 dark:text-zinc-300 dark:hover:text-white transition-colors"
             title="Alerts Incident Feed"
           >
             <Bell className="w-4 h-4" />
@@ -298,13 +268,16 @@ export const Header: React.FC<HeaderProps> = ({
             )}
           </button>
 
+          {/* Dark / Light Theme Mode Toggle Button */}
+          <ThemeToggle />
+
           {/* Language Switcher */}
-          <div className="flex items-center bg-zinc-900/60 border border-zinc-800 rounded-2xl p-1 text-xs">
-            <Globe className="w-3.5 h-3.5 text-zinc-500 mx-1.5" />
+          <div className="flex items-center bg-slate-100 dark:bg-zinc-900/60 border border-slate-200 dark:border-zinc-800 rounded-2xl p-1 text-xs">
+            <Globe className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500 mx-1.5" />
             <button
               onClick={() => onLangChange('en')}
               className={`px-2 py-0.5 rounded-xl font-bold transition-all ${
-                currentLang === 'en' ? 'bg-white text-black' : 'text-zinc-400 hover:text-white'
+                currentLang === 'en' ? 'bg-white text-slate-900 shadow-xs dark:bg-white dark:text-black' : 'text-slate-600 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-white'
               }`}
             >
               EN
@@ -312,7 +285,7 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               onClick={() => onLangChange('fr')}
               className={`px-2 py-0.5 rounded-xl font-bold transition-all ${
-                currentLang === 'fr' ? 'bg-white text-black' : 'text-zinc-400 hover:text-white'
+                currentLang === 'fr' ? 'bg-white text-slate-900 shadow-xs dark:bg-white dark:text-black' : 'text-slate-600 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-white'
               }`}
             >
               FR
@@ -320,7 +293,7 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               onClick={() => onLangChange('ar')}
               className={`px-2 py-0.5 rounded-xl font-bold font-arabic transition-all ${
-                currentLang === 'ar' ? 'bg-white text-black' : 'text-zinc-400 hover:text-white'
+                currentLang === 'ar' ? 'bg-white text-slate-900 shadow-xs dark:bg-white dark:text-black' : 'text-slate-600 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-white'
               }`}
             >
               عربي
@@ -332,7 +305,7 @@ export const Header: React.FC<HeaderProps> = ({
             <div className="relative">
               <button
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                className="flex items-center gap-2 p-1 pl-1.5 pr-2.5 rounded-2xl bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-800 transition-colors"
+                className="flex items-center gap-2 p-1 pl-1.5 pr-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-800 dark:bg-zinc-900/80 dark:hover:bg-zinc-800 dark:border-zinc-800 dark:text-zinc-200 transition-colors"
               >
                 <img
                   src={currentUser.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80'}
@@ -340,16 +313,16 @@ export const Header: React.FC<HeaderProps> = ({
                   className="w-6 h-6 rounded-full border border-emerald-500/80 object-cover"
                   referrerPolicy="no-referrer"
                 />
-                <span className="text-xs font-bold text-zinc-200 hidden md:inline max-w-[100px] truncate">
+                <span className="text-xs font-bold text-slate-800 dark:text-zinc-200 hidden md:inline max-w-[100px] truncate">
                   {currentUser.name}
                 </span>
-                <ChevronDown className="w-3 h-3 text-zinc-400" />
+                <ChevronDown className="w-3 h-3 text-slate-500 dark:text-zinc-400" />
               </button>
 
               {/* User Dropdown Menu */}
               {isUserMenuOpen && (
-                <div className="absolute right-0 mt-2 w-64 rounded-2xl bg-zinc-950 border border-zinc-800 shadow-2xl p-3 space-y-3 z-50 animate-in fade-in zoom-in-95 duration-150">
-                  <div className="flex items-center gap-2.5 pb-2.5 border-b border-zinc-800/80">
+                <div className="absolute right-0 mt-2 w-64 rounded-2xl bg-white border border-slate-200 text-slate-900 dark:bg-zinc-950 dark:border-zinc-800 dark:text-white shadow-2xl p-3 space-y-3 z-50 animate-in fade-in zoom-in-95 duration-150">
+                  <div className="flex items-center gap-2.5 pb-2.5 border-b border-slate-200 dark:border-zinc-800/80">
                     <img
                       src={currentUser.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80'}
                       alt={currentUser.name}
@@ -357,24 +330,29 @@ export const Header: React.FC<HeaderProps> = ({
                       referrerPolicy="no-referrer"
                     />
                     <div className="min-w-0">
-                      <p className="text-xs font-bold text-white truncate">{currentUser.name}</p>
-                      <p className="text-[10px] text-zinc-400 font-mono truncate">{currentUser.email}</p>
-                      <span className="inline-block text-[9px] uppercase font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-bold mt-1">
+                      <p className="text-xs font-bold text-slate-900 dark:text-white truncate">{currentUser.name}</p>
+                      <p className="text-[10px] text-slate-500 dark:text-zinc-400 font-mono truncate">{currentUser.email}</p>
+                      <span className="inline-block text-[9px] uppercase font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 font-bold mt-1">
                         {currentUser.role.replace('_', ' ')}
                       </span>
                     </div>
                   </div>
 
                   <div className="space-y-1 text-xs">
+                    <div className="px-3 py-1.5 flex items-center justify-between rounded-xl bg-slate-50 border border-slate-200 dark:bg-zinc-900/40 dark:border-zinc-800/60">
+                      <span className="text-slate-600 dark:text-zinc-400 font-bold">Theme:</span>
+                      <ThemeToggle variant="pill" />
+                    </div>
+
                     <button
                       onClick={() => {
                         setIsUserMenuOpen(false);
                         onToggleLoginPreview();
                       }}
-                      className="w-full text-left px-3 py-2 rounded-xl text-zinc-300 hover:text-white hover:bg-zinc-900 transition-colors flex items-center justify-between"
+                      className="w-full text-left px-3 py-2 rounded-xl text-slate-700 hover:text-slate-900 hover:bg-slate-100 dark:text-zinc-300 dark:hover:text-white dark:hover:bg-zinc-900 transition-colors flex items-center justify-between"
                     >
                       <span className="flex items-center gap-2">
-                        <Lock className="w-3.5 h-3.5 text-emerald-400" />
+                        <Lock className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                         <span>{t.auth.viewLoginPreview}</span>
                       </span>
                     </button>
@@ -384,7 +362,7 @@ export const Header: React.FC<HeaderProps> = ({
                         setIsUserMenuOpen(false);
                         onLogout();
                       }}
-                      className="w-full text-left px-3 py-2 rounded-xl text-red-400 hover:bg-red-500/10 transition-colors flex items-center gap-2"
+                      className="w-full text-left px-3 py-2 rounded-xl text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors flex items-center gap-2"
                     >
                       <LogOut className="w-3.5 h-3.5" />
                       <span>{t.auth.signOut}</span>
@@ -396,45 +374,13 @@ export const Header: React.FC<HeaderProps> = ({
           ) : (
             <button
               onClick={onToggleLoginPreview}
-              className="px-3.5 py-1.5 rounded-2xl bg-white hover:bg-zinc-200 text-black text-xs font-bold uppercase tracking-wider transition-colors shadow-md"
+              className="px-3.5 py-1.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider transition-colors shadow-xs"
             >
               {t.auth.signInButton.split(' ')[0]}
             </button>
           )}
         </div>
       </div>
-
-      {/* Secondary Navigation Ribbon for Web Admin Mode */}
-      {appMode === 'web' && !isLoginPreview && (
-        <div className="border-t border-zinc-900/80 bg-[#060606] px-4 sm:px-8 py-2 overflow-x-auto">
-          <div className="max-w-7xl mx-auto flex items-center gap-1.5 min-w-max">
-            {allNavItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => onNavChange(item.id)}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
-                  activeNav === item.id
-                    ? 'bg-zinc-900 text-white border border-zinc-700 shadow-md'
-                    : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/40 border border-transparent'
-                }`}
-              >
-                <span className={activeNav === item.id ? 'text-emerald-400' : 'text-zinc-500'}>
-                  {item.icon}
-                </span>
-                <span>{item.label}</span>
-                {item.badge && (
-                  <span className="text-[9px] px-1.5 py-0.2 rounded-full font-bold uppercase tracking-wider bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                    {item.badge}
-                  </span>
-                )}
-                {item.id === 'alerts' && unreadAlertsCount > 0 && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_4px_#10b981]" />
-                )}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
     </header>
   );
 };

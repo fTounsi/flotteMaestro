@@ -30,6 +30,7 @@ export type PermissionKey =
   | 'modules:cold_chain'
   | 'modules:live_sharing'
   | 'modules:maintenance'
+  | 'modules:billing'
   // Administration & Security
   | 'users:view'
   | 'users:manage'
@@ -79,6 +80,7 @@ export const ALL_PERMISSIONS: PermissionDefinition[] = [
   { key: 'modules:cold_chain', category: 'modules', label: 'Cold Chain Monitoring', description: 'Monitor BLE temperature probes, door sensors, and HACCP compliance.' },
   { key: 'modules:live_sharing', category: 'modules', label: 'Temporary Live Share', description: 'Generate public expiring tracking links for shippers and customers.' },
   { key: 'modules:maintenance', category: 'modules', label: 'Preventive Maintenance', description: 'Manage odometer-based service intervals, work orders, and costs.' },
+  { key: 'modules:billing', category: 'modules', label: 'Invoicing & Bills', description: 'Generate PDF invoices and manage client billing based on vehicle counts and service telemetry.' },
 
   // Admin & Security
   { key: 'users:view', category: 'admin_security', label: 'View Team Users', description: 'Inspect user accounts, contact info, and activity status.' },

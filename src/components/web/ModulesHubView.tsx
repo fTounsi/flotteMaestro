@@ -15,14 +15,18 @@ import {
   TrendingUp,
   DollarSign,
   Layers,
-  HelpCircle
+  HelpCircle,
+  Receipt,
+  Building2
 } from 'lucide-react';
-import { Organization, ModuleKey, EnabledModules } from '../../types/fleet';
+import { Organization, ModuleKey, EnabledModules, User } from '../../types/fleet';
 import { MODULE_METADATA_LIST } from '../../data/modulesData';
+import { userHasPermission } from '../../types/rbac';
 
 interface ModulesHubViewProps {
   currentOrg: Organization;
   organizations: Organization[];
+  currentUser?: User | null;
   onToggleModule: (orgId: string, moduleKey: ModuleKey, enabled: boolean) => void;
   onNavigateToTab: (tab: any) => void;
 }
@@ -32,19 +36,26 @@ const MODULE_ICONS: Record<ModuleKey, React.ComponentType<{ className?: string }
   fuel_intelligence: Fuel,
   cold_chain: Snowflake,
   live_sharing: Share2,
-  predictive_maintenance: Wrench
+  predictive_maintenance: Wrench,
+  billing: Receipt
 };
 
 export const ModulesHubView: React.FC<ModulesHubViewProps> = ({
   currentOrg,
   organizations,
+  currentUser,
   onToggleModule,
   onNavigateToTab
 }) => {
-  const [selectedOrgId, setSelectedOrgId] = useState(currentOrg.id);
+  const isSuperAdmin = currentUser?.role === 'super_admin' || currentUser?.role === 'support_admin';
+  const canManageModules = isSuperAdmin || currentUser?.role === 'org_owner' || userHasPermission(currentUser, 'users:manage');
+
+  // Super Admin can switch Target Organization; all other users are strictly locked to their assigned organization
+  const [selectedOrgId, setSelectedOrgId] = useState(isSuperAdmin ? currentOrg.id : (currentUser?.organizationId || currentOrg.id));
   const [filterCategory, setFilterCategory] = useState<'all' | 'unlocked' | 'locked'>('all');
 
-  const targetOrg = organizations.find((o) => o.id === selectedOrgId) || currentOrg;
+  const effectiveOrgId = isSuperAdmin ? selectedOrgId : (currentUser?.organizationId || currentOrg.id);
+  const targetOrg = organizations.find((o) => o.id === effectiveOrgId) || currentOrg;
   const enabledModules: EnabledModules = targetOrg.enabledModules || {
     car_rental: false,
     fuel_intelligence: true,
@@ -93,18 +104,37 @@ export const ModulesHubView: React.FC<ModulesHubViewProps> = ({
           {/* Org Selector & Stats Badge */}
           <div className="bg-slate-800/80 backdrop-blur-md p-4 rounded-xl border border-slate-700/80 flex flex-col gap-3 min-w-[260px]">
             <div>
-              <label className="text-xs text-slate-400 block mb-1 font-medium">Target Organization</label>
-              <select
-                value={selectedOrgId}
-                onChange={(e) => setSelectedOrgId(e.target.value)}
-                className="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white font-medium focus:ring-2 focus:ring-indigo-500 outline-none"
-              >
-                {organizations.map((org) => (
-                  <option key={org.id} value={org.id}>
-                    {org.name} ({org.city})
-                  </option>
-                ))}
-              </select>
+              <div className="flex items-center justify-between mb-1">
+                <label className="text-xs text-slate-400 font-medium">
+                  {isSuperAdmin ? 'Target Organization (Super Admin)' : 'Assigned Organization'}
+                </label>
+                {!isSuperAdmin && (
+                  <span className="text-[9px] uppercase font-mono font-bold px-1.5 py-0.5 rounded bg-slate-900 text-slate-400 border border-slate-700 flex items-center gap-1">
+                    <Lock className="w-2.5 h-2.5 text-emerald-400" />
+                    <span>Locked</span>
+                  </span>
+                )}
+              </div>
+
+              {isSuperAdmin ? (
+                <select
+                  value={selectedOrgId}
+                  onChange={(e) => setSelectedOrgId(e.target.value)}
+                  className="w-full bg-slate-900 border border-purple-500/40 rounded-lg px-3 py-2 text-sm text-purple-200 font-medium focus:ring-2 focus:ring-purple-500 outline-none cursor-pointer"
+                >
+                  {organizations.map((org) => (
+                    <option key={org.id} value={org.id} className="bg-slate-950 text-white">
+                      {org.name} ({org.city})
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <div className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-medium flex items-center gap-2">
+                  <Building2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <span className="truncate">{targetOrg.name}</span>
+                  <span className="text-xs text-slate-400 shrink-0">({targetOrg.city})</span>
+                </div>
+              )}
             </div>
 
             <div className="pt-2 border-t border-slate-700/60 flex items-center justify-between text-xs">
@@ -238,6 +268,9 @@ export const ModulesHubView: React.FC<ModulesHubViewProps> = ({
         {filteredModules.map((mod) => {
           const isUnlocked = Boolean(enabledModules[mod.id]);
           const Icon = MODULE_ICONS[mod.id] || Boxes;
+          const isRentalModule = mod.id === 'car_rental';
+          const targetHasRentalType = (targetOrg.types || []).includes('Rental agency');
+          const isUnlockRestricted = isRentalModule && !targetHasRentalType;
 
           return (
             <div
@@ -282,9 +315,30 @@ export const ModulesHubView: React.FC<ModulesHubViewProps> = ({
                   <div className="flex flex-col items-end gap-1 shrink-0">
                     <button
                       type="button"
-                      onClick={() => onToggleModule(targetOrg.id, mod.id, !isUnlocked)}
-                      className={`relative inline-flex h-7 w-14 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 ${
-                        isUnlocked ? 'bg-emerald-600' : 'bg-slate-300 dark:bg-slate-700'
+                      disabled={!canManageModules || (isUnlockRestricted && !isUnlocked)}
+                      title={
+                        !canManageModules
+                          ? 'Module activation requires Org Owner or Super Admin privileges'
+                          : isUnlockRestricted && !isUnlocked
+                          ? "Requires 'Rental agency' Organization Type"
+                          : `Click to ${isUnlocked ? 'Deactivate' : 'Activate'} ${mod.name}`
+                      }
+                      onClick={() => {
+                        if (!canManageModules) return;
+                        if (isUnlockRestricted && !isUnlocked) {
+                          alert("Rent-Vehicle Module requires the organization to have the 'Rental agency' Type. Please update the organization's types in Organization Management.");
+                          return;
+                        }
+                        onToggleModule(targetOrg.id, mod.id, !isUnlocked);
+                      }}
+                      className={`relative inline-flex h-7 w-14 shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 ${
+                        !canManageModules
+                          ? 'bg-slate-400 dark:bg-slate-800 opacity-50 cursor-not-allowed'
+                          : isUnlocked
+                          ? 'bg-emerald-600 cursor-pointer'
+                          : isUnlockRestricted
+                          ? 'bg-slate-300 dark:bg-slate-800 opacity-60 cursor-not-allowed'
+                          : 'bg-slate-300 dark:bg-slate-700 cursor-pointer'
                       }`}
                       aria-label={`Toggle ${mod.name}`}
                     >
@@ -296,16 +350,29 @@ export const ModulesHubView: React.FC<ModulesHubViewProps> = ({
                     </button>
                     <span
                       className={`text-[11px] font-semibold ${
-                        isUnlocked ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400'
+                        !canManageModules
+                          ? 'text-slate-500 text-[10px]'
+                          : isUnlocked
+                          ? 'text-emerald-600 dark:text-emerald-400'
+                          : isUnlockRestricted
+                          ? 'text-amber-500 text-[10px]'
+                          : 'text-slate-400'
                       }`}
                     >
-                      {isUnlocked ? 'Unlocked' : 'Locked'}
+                      {!canManageModules ? 'Admin Only' : isUnlocked ? 'Unlocked' : isUnlockRestricted ? 'Requires Rental Type' : 'Locked'}
                     </span>
                   </div>
                 </div>
 
                 {/* Description */}
                 <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">{mod.fullDesc}</p>
+
+                {/* Special rule callout if rental restriction applies */}
+                {isUnlockRestricted && (
+                  <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 text-xs text-amber-800 dark:text-amber-300">
+                    <span className="font-bold">Organization Type Requirement:</span> {targetOrg.name} does not have the <span className="font-mono font-bold">Rental agency</span> type assigned. To unlock this module, Super Admin must assign the Rental agency type in Organization Management.
+                  </div>
+                )}
 
                 {/* Key Features List */}
                 <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
@@ -339,11 +406,18 @@ export const ModulesHubView: React.FC<ModulesHubViewProps> = ({
                 <div className="flex items-center gap-2">
                   {isUnlocked ? (
                     <button
-                      onClick={() => onNavigateToTab(mod.id)}
+                      onClick={() => onNavigateToTab(mod.id === 'billing' ? 'invoicing' : mod.id)}
                       className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-sm transition-colors"
                     >
                       <span>Open {mod.name.split(' ')[0]} Hub</span>
                       <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  ) : isUnlockRestricted ? (
+                    <button
+                      onClick={() => onNavigateToTab('organizations')}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold shadow-sm transition-colors"
+                    >
+                      <span>Add Rental Type</span>
                     </button>
                   ) : (
                     <button

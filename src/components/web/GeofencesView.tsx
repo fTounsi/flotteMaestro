@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { Shield, Plus, MapPin, Trash2, Edit2, AlertCircle, X, Check } from 'lucide-react';
-import { Geofence } from '../../types/fleet';
+import { Shield, Plus, MapPin, Trash2, Edit2, AlertCircle, X, Check, Map, Compass } from 'lucide-react';
+import { Geofence, User } from '../../types/fleet';
 import { TranslationDictionary } from '../../translations/i18n';
+import { userHasPermission } from '../../types/rbac';
 
 interface GeofencesViewProps {
   geofences: Geofence[];
+  currentUser?: User | null;
   onAddGeofence: (geofence: Partial<Geofence>) => void;
   onDeleteGeofence: (id: string) => void;
   t: TranslationDictionary;
@@ -12,10 +14,12 @@ interface GeofencesViewProps {
 
 export const GeofencesView: React.FC<GeofencesViewProps> = ({
   geofences,
+  currentUser,
   onAddGeofence,
   onDeleteGeofence,
   t
 }) => {
+  const canManageGeofences = userHasPermission(currentUser, 'geofences:manage');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [name, setName] = useState('');
   const [type, setType] = useState<'circle' | 'polygon'>('circle');
@@ -88,23 +92,40 @@ export const GeofencesView: React.FC<GeofencesViewProps> = ({
         </div>
 
         <div className="md:col-span-4 flex flex-col gap-4">
-          <div
-            onClick={() => setIsAddModalOpen(true)}
-            className="bg-white text-black rounded-[32px] p-6 flex flex-col justify-between hover:bg-emerald-400 transition-all cursor-pointer shadow-2xl flex-1 group"
-          >
-            <div className="flex justify-between items-start">
-              <p className="text-[10px] uppercase tracking-widest font-black">Spatial Builder</p>
-              <Plus className="w-5 h-5 group-hover:scale-125 transition-transform" />
+          {canManageGeofences ? (
+            <div
+              onClick={() => setIsAddModalOpen(true)}
+              className="bg-white text-black rounded-[32px] p-6 flex flex-col justify-between hover:bg-emerald-400 transition-all cursor-pointer shadow-2xl flex-1 group"
+            >
+              <div className="flex justify-between items-start">
+                <p className="text-[10px] uppercase tracking-widest font-black">Spatial Builder</p>
+                <Plus className="w-5 h-5 group-hover:scale-125 transition-transform" />
+              </div>
+              <div>
+                <h4 className="text-xl font-black leading-tight tracking-tight">
+                  {t.actions.addGeofence}
+                </h4>
+                <p className="text-[11px] text-zinc-700 mt-1 font-medium">
+                  Circle Radius or Multi-Point Polygon
+                </p>
+              </div>
             </div>
-            <div>
-              <h4 className="text-xl font-black leading-tight tracking-tight">
-                {t.actions.addGeofence}
-              </h4>
-              <p className="text-[11px] text-zinc-700 mt-1 font-medium">
-                Circle Radius or Multi-Point Polygon
-              </p>
+          ) : (
+            <div className="bg-zinc-900/40 rounded-[32px] p-6 border border-zinc-800 flex flex-col justify-between shadow-2xl flex-1">
+              <div className="flex justify-between items-start">
+                <p className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold">Spatial Perimeter</p>
+                <Compass className="w-4 h-4 text-emerald-400" />
+              </div>
+              <div>
+                <h4 className="text-lg font-black text-white leading-tight">
+                  Geofence Monitoring
+                </h4>
+                <p className="text-[11px] text-zinc-400 mt-1">
+                  Automated entry & exit event triggers active
+                </p>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
 
@@ -128,12 +149,14 @@ export const GeofencesView: React.FC<GeofencesViewProps> = ({
                   </span>
                   <h4 className="text-base font-extrabold text-white mt-1.5">{geo.name}</h4>
                 </div>
-                <button
-                  onClick={() => onDeleteGeofence(geo.id)}
-                  className="p-1.5 rounded-xl bg-zinc-900 hover:bg-rose-950 text-zinc-500 hover:text-rose-400 transition-colors"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
+                {canManageGeofences && (
+                  <button
+                    onClick={() => onDeleteGeofence(geo.id)}
+                    className="p-1.5 rounded-xl bg-zinc-900 hover:bg-rose-950 text-zinc-500 hover:text-rose-400 transition-colors"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                )}
               </div>
 
               <div className="pl-2 space-y-1 text-xs text-zinc-400 font-mono">

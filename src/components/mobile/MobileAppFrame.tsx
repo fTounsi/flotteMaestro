@@ -19,6 +19,7 @@ import {
 import { Vehicle, Geofence, Alert, FleetReport, Organization, User } from '../../types/fleet';
 import { TranslationDictionary, Language } from '../../translations/i18n';
 import { MobileLoginView } from './MobileLoginView';
+import { ThemeToggle } from '../common/ThemeToggle';
 
 interface MobileAppFrameProps {
   vehicles: Vehicle[];
@@ -83,7 +84,9 @@ export const MobileAppFrame: React.FC<MobileAppFrameProps> = ({
         attributionControl: false
       });
 
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        subdomains: 'abc',
         maxZoom: 19
       }).addTo(map);
 
@@ -172,6 +175,9 @@ export const MobileAppFrame: React.FC<MobileAppFrameProps> = ({
             <span>Mobile Login</span>
           </button>
         </div>
+
+        {/* Theme Switcher Toggle */}
+        <ThemeToggle variant="pill" />
       </div>
 
       {/* Device Chassis Frame */}
@@ -285,7 +291,7 @@ export const MobileAppFrame: React.FC<MobileAppFrameProps> = ({
                   </div>
 
                   {/* Mobile Mini Live Map */}
-                  <div className="h-48 rounded-[24px] overflow-hidden border border-zinc-800 relative shadow-xl bg-black">
+                  <div className="h-48 rounded-[24px] overflow-hidden border border-zinc-800 relative shadow-xl bg-black isolate z-0">
                     <div ref={mobileMapContainerRef} className="w-full h-full" />
                   </div>
 
@@ -426,6 +432,11 @@ export const MobileAppFrame: React.FC<MobileAppFrameProps> = ({
                         <span>Hardware Enclave SSL</span>
                       </div>
                       <span className="text-[10px] font-mono text-zinc-400">TLS 1.3</span>
+                    </div>
+
+                    <div className="p-3 rounded-2xl bg-zinc-900/30 border border-zinc-800 flex items-center justify-between text-xs">
+                      <span className="font-bold text-zinc-300">App Theme</span>
+                      <ThemeToggle variant="pill" />
                     </div>
                   </div>
 

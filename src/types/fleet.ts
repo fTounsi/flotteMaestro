@@ -5,7 +5,8 @@ export type ModuleKey =
   | 'fuel_intelligence'
   | 'cold_chain'
   | 'live_sharing'
-  | 'predictive_maintenance';
+  | 'predictive_maintenance'
+  | 'billing';
 
 export interface EnabledModules {
   car_rental: boolean;
@@ -13,6 +14,7 @@ export interface EnabledModules {
   cold_chain: boolean;
   live_sharing: boolean;
   predictive_maintenance: boolean;
+  billing?: boolean;
 }
 
 export type NavigationTab =
@@ -29,6 +31,8 @@ export type NavigationTab =
   | 'cold_chain'
   | 'live_sharing'
   | 'predictive_maintenance'
+  | 'billing'
+  | 'invoicing'
   | 'organizations'
   | 'users'
   | 'settings';
@@ -125,10 +129,18 @@ export interface Vehicle {
   fuelTankCapacityLiters?: number;
   rentalInfo?: {
     isRented: boolean;
+    rentalStatus?: RentalAvailabilityStatus;
     renterName?: string;
+    renterPhone?: string;
     contractNumber?: string;
+    reservationNumber?: string;
+    dailyRateUsd?: number;
+    dailyRateMad?: number;
     dailyMileageLimitKm?: number;
     returnDate?: string;
+    category?: 'Economy Sedan' | 'Compact Hatchback' | 'SUV & Crossover' | 'Commercial Van' | 'Luxury & Executive';
+    transmission?: 'Manual' | 'Automatic';
+    cleaningStatus?: 'Clean' | 'Needs Cleaning';
   };
   notes?: string;
   createdAt: string;
@@ -248,10 +260,19 @@ export interface FleetStop {
   isIdle: boolean; // engine on but stopped
 }
 
+export const DEFAULT_ORGANIZATION_TYPES = [
+  'Rental agency',
+  'Transport company',
+  'Other'
+] as const;
+
+export type StandardOrganizationType = (typeof DEFAULT_ORGANIZATION_TYPES)[number];
+
 export interface Organization {
   id: string;
   name: string;
   legalName: string;
+  types: string[]; // One or more: 'Rental agency', 'Transport company', 'Other', or custom types
   email: string;
   phone: string;
   country: string;
@@ -415,6 +436,46 @@ export interface RentalContract {
   createdAt: string;
 }
 
+export interface RentalReservation {
+  id: string;
+  organizationId: string;
+  reservationNumber: string;
+  vehicleId: string;
+  vehiclePlate: string;
+  vehicleModel: string;
+  category: string;
+  customerName: string;
+  customerPhone: string;
+  customerEmail: string;
+  customerCinOrPassport: string;
+  driverLicenseNumber: string;
+  pickupDate: string;
+  returnDate: string;
+  daysCount: number;
+  dailyRateUsd: number;
+  totalEstimatedUsd: number;
+  depositAmountUsd: number;
+  paymentStatus: 'pending' | 'deposit_paid' | 'fully_paid';
+  status: 'confirmed' | 'pending' | 'converted' | 'completed' | 'cancelled';
+  notes?: string;
+  createdAt: string;
+}
+
+export type RentalAvailabilityStatus = 'available' | 'rented' | 'reserved' | 'maintenance' | 'immobilized';
+
+export interface RentalVehicleConfig {
+  dailyRateMad: number;
+  dailyRateUsd: number;
+  dailyMileageLimitKm: number;
+  excessKmRateUsd: number;
+  requiredDepositUsd: number;
+  category: 'Economy Sedan' | 'Compact Hatchback' | 'SUV & Crossover' | 'Commercial Van' | 'Luxury & Executive';
+  transmission: 'Manual' | 'Automatic';
+  seats: number;
+  features: string[];
+}
+
+
 // -------------------------------------------------------------
 // MODULE 2: AI FUEL INTELLIGENCE & ANTI-THEFT
 // -------------------------------------------------------------
@@ -544,11 +605,26 @@ export interface DeliveryPod {
 // -------------------------------------------------------------
 // MODULE 5: PREDICTIVE MAINTENANCE & OBD-II DIAGNOSTICS
 // -------------------------------------------------------------
+export type MaintenanceServiceType =
+  | 'engine_oil'
+  | 'brake_pads'
+  | 'tires'
+  | 'timing_belt'
+  | 'air_filter'
+  | 'technical_inspection'
+  | 'spark_plugs'
+  | 'transmission_fluid'
+  | 'battery_coolant'
+  | 'general_overhaul'
+  | 'other';
+
 export interface MaintenanceInterval {
   id: string;
   vehicleId: string;
   vehiclePlate: string;
-  serviceType: 'engine_oil' | 'brake_pads' | 'tires' | 'timing_belt' | 'air_filter' | 'technical_inspection';
+  vehicleModel?: string;
+  organizationId?: string;
+  serviceType: MaintenanceServiceType;
   title: string;
   intervalKm: number;
   intervalDays: number;
@@ -560,6 +636,50 @@ export interface MaintenanceInterval {
   remainingDays: number;
   status: 'good' | 'due_soon' | 'overdue';
   estimatedCostUsd: number;
+  preferredWorkshop?: string;
+  emailAlertsEnabled?: boolean;
+  alertThresholdKm?: number;
+  alertThresholdDays?: number;
+  lastAlertSentAt?: string;
+  alertRecipientEmails?: string[];
+  notes?: string;
+}
+
+export interface MaintenanceAlertLog {
+  id: string;
+  timestamp: string;
+  vehicleId: string;
+  vehiclePlate: string;
+  vehicleModel?: string;
+  serviceIntervalId: string;
+  serviceTitle: string;
+  serviceType: MaintenanceServiceType;
+  alertType: 'warning_due_soon' | 'critical_overdue' | 'weekly_digest' | 'manual_dispatch';
+  recipientEmails: string[];
+  subject: string;
+  currentOdometer: number;
+  nextDueOdometer: number;
+  remainingKm: number;
+  remainingDays: number;
+  estimatedCostUsd: number;
+  status: 'sent' | 'delivered' | 'opened';
+  organizationId: string;
+  organizationName: string;
+  notes?: string;
+}
+
+export interface MaintenanceEmailSettings {
+  autoAlertEnabled: boolean;
+  warningKmThreshold: number; // e.g. 1000 km
+  warningDaysThreshold: number; // e.g. 14 days
+  criticalEscalationEnabled: boolean;
+  weeklyDigestEnabled: boolean;
+  weeklyDigestDay: 'Monday' | 'Friday';
+  defaultRecipientEmails: string[];
+  includeCostEstimate: boolean;
+  includeCertifiedGarages: boolean;
+  smtpSenderName: string;
+  smtpSenderEmail: string;
 }
 
 export interface DtcDiagnosticCode {
@@ -602,4 +722,95 @@ export interface ModuleMetadata {
   pricePerVehicleMonthUsd: number;
   keyFeatures: string[];
 }
+
+// -------------------------------------------------------------
+// MODULE 6: FLEET INVOICING & SERVICE BILLING
+// -------------------------------------------------------------
+export type InvoiceStatus = 'draft' | 'pending' | 'paid' | 'overdue' | 'cancelled';
+
+export type InvoiceLineItemType =
+  | 'vehicle_base'
+  | 'sim_cellular_data'
+  | 'high_freq_telemetry'
+  | 'relay_immobilizer'
+  | 'fuel_intelligence'
+  | 'cold_chain'
+  | 'live_sharing'
+  | 'predictive_maintenance'
+  | 'api_gateway'
+  | 'hardware_installation'
+  | 'custom';
+
+export interface InvoiceLineItem {
+  id: string;
+  type: InvoiceLineItemType;
+  description: string;
+  vehicleCount?: number;
+  usageMetric?: string; // e.g. "12 vehicles x 30 days", "18.4 GB cellular payload", "24,000 API requests"
+  unitPrice: number;
+  quantity: number;
+  totalPrice: number;
+}
+
+export interface Invoice {
+  id: string;
+  invoiceNumber: string; // e.g. "INV-2026-0089"
+  organizationId: string;
+  organizationName: string;
+  clientId: string;
+  clientName: string;
+  clientLegalName: string;
+  clientAddress: string;
+  clientCity: string;
+  clientCountry: string;
+  clientIceOrTaxId: string; // ICE / Tax ID / VAT
+  clientEmail: string;
+  clientPhone: string;
+  billingPeriodStart: string;
+  billingPeriodEnd: string;
+  issueDate: string;
+  dueDate: string;
+  paidDate?: string;
+  status: InvoiceStatus;
+  currency: 'USD' | 'MAD' | 'EUR';
+  vehicleCount: number;
+  lineItems: InvoiceLineItem[];
+  subtotal: number;
+  taxRatePercent: number; // e.g. 20% standard VAT
+  taxAmount: number;
+  discountAmount?: number;
+  totalAmount: number;
+  paymentMethod?: string;
+  bankDetails?: {
+    bankName: string;
+    ribOrIban: string;
+    swiftBic: string;
+  };
+  notes?: string;
+  termsAndConditions?: string;
+  createdAt: string;
+}
+
+export interface BillingClientProfile {
+  id: string;
+  organizationId: string;
+  name: string;
+  legalName: string;
+  iceOrTaxId: string;
+  contactPerson: string;
+  email: string;
+  phone: string;
+  address: string;
+  city: string;
+  country: string;
+  contractedVehicles: number;
+  activeVehicles: number;
+  billingPlan: string;
+  defaultCurrency: 'USD' | 'MAD' | 'EUR';
+  baseRatePerVehicle: number;
+  activeAddonIds: string[];
+  lastInvoicedDate?: string;
+  totalInvoicedToDate: number;
+}
+
 

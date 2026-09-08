@@ -30,6 +30,7 @@ import { alertSound } from './utils/audioAlert';
 
 // Common Components
 import { Header } from './components/common/Header';
+import { Sidebar } from './components/common/Sidebar';
 
 // Web Admin Components
 import { LiveMap } from './components/web/LiveMap';
@@ -52,6 +53,7 @@ import { FuelIntelligenceView } from './components/web/FuelIntelligenceView';
 import { ColdChainView } from './components/web/ColdChainView';
 import { LiveShareView } from './components/web/LiveShareView';
 import { MaintenanceView } from './components/web/MaintenanceView';
+import { InvoicingView } from './components/web/InvoicingView';
 import { SystemSettingsView } from './components/web/SystemSettingsView';
 import { SystemParametersConfig } from './types/serverConfig';
 import { INITIAL_SYSTEM_CONFIG } from './data/serverConfigData';
@@ -89,11 +91,16 @@ export function App() {
   const [wsMessages, setWsMessages] = useState<WebSocketMessage[]>([]);
   const [isSimulating, setIsSimulating] = useState<boolean>(true);
 
+  // Vertical Sidebar Navigation State
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState<boolean>(false);
+
   // RBAC Simulation Sandbox State
   const [simulatedRole, setSimulatedRole] = useState<UserRole | null>(null);
 
   // Modals
   const [selectedVehicleForDetail, setSelectedVehicleForDetail] = useState<Vehicle | null>(null);
+  const [selectedVehicleForTrips, setSelectedVehicleForTrips] = useState<string | undefined>(undefined);
   const [vehicleForCommand, setVehicleForCommand] = useState<Vehicle | null>(null);
   const [isCatalogModalOpen, setIsCatalogModalOpen] = useState<boolean>(false);
 
@@ -107,6 +114,15 @@ export function App() {
         }
       : currentUser
     : null;
+
+  // Auto-sync selectedOrgId for non-Super Admins
+  useEffect(() => {
+    if (effectiveUser && effectiveUser.role !== 'super_admin' && effectiveUser.role !== 'support_admin' && effectiveUser.organizationId) {
+      if (selectedOrgId !== effectiveUser.organizationId) {
+        setSelectedOrgId(effectiveUser.organizationId);
+      }
+    }
+  }, [effectiveUser, selectedOrgId]);
 
   const t = TRANSLATIONS[currentLang];
   const activeOrg = organizations.find((o) => o.id === selectedOrgId) || organizations[0];
@@ -362,6 +378,7 @@ export function App() {
       id: `org_${Date.now()}`,
       name: orgData.name || 'New Organization',
       legalName: orgData.legalName || 'New Organization SARL',
+      types: orgData.types && orgData.types.length > 0 ? orgData.types : ['Transport company'],
       email: orgData.email || 'contact@org.ma',
       phone: orgData.phone || '+212 522 00 00 00',
       country: 'Morocco',
@@ -394,6 +411,22 @@ export function App() {
       }
     };
     setOrganizations((prev) => [newOrg, ...prev]);
+  };
+
+  // Update Organization
+  const handleUpdateOrganization = (updatedOrg: Organization) => {
+    setOrganizations((prev) => prev.map((o) => (o.id === updatedOrg.id ? updatedOrg : o)));
+  };
+
+  // Delete Organization
+  const handleDeleteOrganization = (orgId: string) => {
+    setOrganizations((prev) => {
+      const remaining = prev.filter((o) => o.id !== orgId);
+      if (selectedOrgId === orgId && remaining.length > 0) {
+        setSelectedOrgId(remaining[0].id);
+      }
+      return remaining;
+    });
   };
 
   // Renew Subscription
@@ -480,7 +513,7 @@ export function App() {
   return (
     <div
       dir={currentLang === 'ar' ? 'rtl' : 'ltr'}
-      className="min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-emerald-500 selection:text-slate-950 font-sans"
+      className="min-h-screen bg-slate-50 dark:bg-[#080808] text-slate-900 dark:text-zinc-100 flex flex-col selection:bg-emerald-500 selection:text-white font-sans transition-colors duration-200"
     >
       {/* Top Application Header with Mode Switcher, Tenant Dropdown & User Auth Controls */}
       <Header
@@ -502,6 +535,14 @@ export function App() {
         onLogout={handleLogout}
         isLoginPreview={isLoginPreview}
         onToggleLoginPreview={handleToggleLoginPreview}
+        isSidebarCollapsed={isSidebarCollapsed}
+        onToggleSidebar={() => {
+          if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+            setIsMobileSidebarOpen((prev) => !prev);
+          } else {
+            setIsSidebarCollapsed((prev) => !prev);
+          }
+        }}
         t={t}
       />
 
@@ -513,216 +554,267 @@ export function App() {
         onExitSimulation={() => setSimulatedRole(null)}
       />
 
-      {/* Main Mode View Routing */}
-      <main className="flex-1 p-3 sm:p-5 max-w-7xl w-full mx-auto">
-        {/* 1. WEB ADMIN PORTAL */}
-        {appMode === 'web' && (
-          <div>
-            {/* Condition: If unauthenticated or previewing login page */}
-            {(!isAuthenticated || isLoginPreview) ? (
-              <WebLoginView
-                organizations={organizations}
-                selectedOrgId={selectedOrgId}
-                onSelectOrg={setSelectedOrgId}
-                users={users}
-                onLogin={handleLogin}
-                currentLang={currentLang}
-                onLangChange={setCurrentLang}
-                t={t}
-              />
-            ) : (
-              <div>
-                {/* Live GPS Tracking Radar Map */}
-                {activeNav === 'live_tracking' && (
-                  <LiveMap
-                    vehicles={vehicles}
-                    geofences={geofences}
-                    onSelectVehicle={setSelectedVehicleForDetail}
-                    onOpenCatalogModal={() => setIsCatalogModalOpen(true)}
-                    t={t}
-                  />
-                )}
-
-                {/* Historical Trips Replay Scrubber */}
-                {activeNav === 'trips' && (
-                  <TripsHistoryView
-                    trips={trips}
-                    vehicles={vehicles}
-                    activeVehicleId={selectedVehicleForDetail?.id}
-                    t={t}
-                  />
-                )}
-
-                {/* Hardware GPS Trackers & Traccar Gateway */}
-                {activeNav === 'trackers' && (
-                  <TrackersView
-                    trackers={trackers}
-                    vehicles={vehicles}
-                    onAddTracker={handleAddTracker}
-                    onAssignTracker={handleAssignTracker}
-                    t={t}
-                  />
-                )}
-
-                {/* Spatial Geofences Manager */}
-                {activeNav === 'geofences' && (
-                  <GeofencesView
-                    geofences={geofences}
-                    onAddGeofence={handleAddGeofence}
-                    onDeleteGeofence={handleDeleteGeofence}
-                    t={t}
-                  />
-                )}
-
-                {/* Real-time Alerts & Safety Center */}
-                {activeNav === 'alerts' && (
-                  <AlertsView
-                    alerts={alerts}
-                    users={users}
-                    currentUser={effectiveUser}
-                    onMarkAsRead={handleMarkAlertAsRead}
-                    onUpdateAlert={(updatedAlert) =>
-                      setAlerts((prev) => prev.map((a) => (a.id === updatedAlert.id ? updatedAlert : a)))
-                    }
-                    onClearAll={handleMarkAllAlertsRead}
-                    t={t}
-                  />
-                )}
-
-                {/* Asynchronous Reports Studio */}
-                {activeNav === 'reports' && (
-                  <ReportsView
-                    vehicles={vehicles}
-                    t={t}
-                  />
-                )}
-
-                {/* Modular Add-Ons Hub */}
-                {activeNav === 'modules_hub' && (
-                  <ModulesHubView
-                    currentOrg={activeOrg}
-                    organizations={organizations}
-                    onToggleModule={handleToggleModule}
-                    onNavigateToTab={setActiveNav}
-                  />
-                )}
-
-                {/* Car Rental & Remote Immobilizer */}
-                {activeNav === 'car_rental' && (
-                  <CarRentalView
-                    vehicles={vehicles}
-                    onToggleRelay={handleToggleRelay}
-                    onSelectVehicle={setSelectedVehicleForDetail}
-                  />
-                )}
-
-                {/* Fuel Intelligence & Theft Detection */}
-                {activeNav === 'fuel_intelligence' && (
-                  <FuelIntelligenceView
-                    vehicles={vehicles}
-                  />
-                )}
-
-                {/* Cold Chain & HACCP Audit */}
-                {activeNav === 'cold_chain' && (
-                  <ColdChainView
-                    vehicles={vehicles}
-                  />
-                )}
-
-                {/* Live Delivery Link & e-POD */}
-                {activeNav === 'live_sharing' && (
-                  <LiveShareView
-                    vehicles={vehicles}
-                  />
-                )}
-
-                {/* Predictive Maintenance & OBD-II Scanner */}
-                {activeNav === 'predictive_maintenance' && (
-                  <MaintenanceView
-                    vehicles={vehicles}
-                  />
-                )}
-
-                {/* Multi-Tenant Organizations & Subscriptions */}
-                {activeNav === 'organizations' && (
-                  <OrganizationsView
-                    organizations={organizations}
-                    onSelectOrg={setSelectedOrgId}
-                    selectedOrgId={selectedOrgId}
-                    t={t}
-                  />
-                )}
-
-                {/* Team RBAC & Permissions */}
-                {activeNav === 'users' && (
-                  <UsersRbacView
-                    users={users}
-                    organizations={organizations}
-                    vehicles={vehicles}
-                    currentUser={effectiveUser}
-                    onAddUser={handleAddUser}
-                    onUpdateUser={handleUpdateUser}
-                    onDeleteUser={handleDeleteUser}
-                    onSimulateRole={(role) => setSimulatedRole(role)}
-                    t={t}
-                  />
-                )}
-
-                {/* Traccar-Grade Admin System Parameters & Protocol Listener Hub */}
-                {activeNav === 'settings' && (
-                  <SystemSettingsView
-                    initialConfig={systemConfig}
-                    onSaveConfig={(newConfig) => setSystemConfig(newConfig)}
-                  />
-                )}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* 2. REST API & WEBSOCKET STREAM EXPLORER */}
-        {appMode === 'api' && (
-          <RestApiExplorer
-            wsMessages={wsMessages}
-            onClearWs={() => setWsMessages([])}
-            isSimulating={isSimulating}
-            onToggleSimulating={handleToggleSimulation}
-            t={t}
-          />
-        )}
-
-        {/* 3. FLUTTER MOBILE APP SIMULATOR */}
-        {appMode === 'mobile' && (
-          <MobileAppFrame
-            vehicles={vehicles}
-            geofences={geofences}
-            alerts={alerts}
-            reports={reports}
+      {/* App Body Layout */}
+      {appMode === 'web' && isAuthenticated && !isLoginPreview ? (
+        <div className="flex-1 flex w-full relative min-h-0">
+          {/* Vertical Sidebar Navigation */}
+          <Sidebar
+            activeNav={activeNav}
+            onNavChange={setActiveNav}
+            isCollapsed={isSidebarCollapsed}
+            onToggleCollapse={() => setIsSidebarCollapsed((prev) => !prev)}
+            isMobileOpen={isMobileSidebarOpen}
+            onCloseMobile={() => setIsMobileSidebarOpen(false)}
             organizations={organizations}
             selectedOrgId={selectedOrgId}
-            onSelectOrg={setSelectedOrgId}
-            users={users}
-            currentUser={currentUser}
-            isAuthenticated={isAuthenticated}
-            onLogin={handleLogin}
-            onLogout={handleLogout}
-            currentLang={currentLang}
-            onLangChange={setCurrentLang}
+            onOrgChange={setSelectedOrgId}
+            unreadAlertsCount={unreadAlertsCount}
+            currentUser={effectiveUser}
             t={t}
           />
-        )}
-      </main>
+
+          {/* Main Dashboard Views Container */}
+          <main className="flex-1 p-3 sm:p-5 w-full min-w-0 max-w-full overflow-x-hidden flex flex-col">
+            <div className="flex-1 max-w-7xl w-full mx-auto">
+              {/* Live GPS Tracking Radar Map */}
+              {activeNav === 'live_tracking' && (
+                <LiveMap
+                  vehicles={vehicles}
+                  geofences={geofences}
+                  currentUser={effectiveUser}
+                  onSelectVehicle={setSelectedVehicleForDetail}
+                  onOpenCatalogModal={() => setIsCatalogModalOpen(true)}
+                  t={t}
+                />
+              )}
+
+              {/* Historical Trips Replay Scrubber */}
+              {activeNav === 'trips' && (
+                <TripsHistoryView
+                  trips={trips}
+                  vehicles={vehicles}
+                  activeVehicleId={selectedVehicleForTrips}
+                  t={t}
+                />
+              )}
+
+              {/* Hardware GPS Trackers & Traccar Gateway */}
+              {activeNav === 'trackers' && (
+                <TrackersView
+                  trackers={trackers}
+                  vehicles={vehicles}
+                  currentUser={effectiveUser}
+                  onAddTracker={handleAddTracker}
+                  onAssignTracker={handleAssignTracker}
+                  t={t}
+                />
+              )}
+
+              {/* Spatial Geofences Manager */}
+              {activeNav === 'geofences' && (
+                <GeofencesView
+                  geofences={geofences}
+                  currentUser={effectiveUser}
+                  onAddGeofence={handleAddGeofence}
+                  onDeleteGeofence={handleDeleteGeofence}
+                  t={t}
+                />
+              )}
+
+              {/* Real-time Alerts & Safety Center */}
+              {activeNav === 'alerts' && (
+                <AlertsView
+                  alerts={alerts}
+                  users={users}
+                  currentUser={effectiveUser}
+                  onMarkAsRead={handleMarkAlertAsRead}
+                  onUpdateAlert={(updatedAlert) =>
+                    setAlerts((prev) => prev.map((a) => (a.id === updatedAlert.id ? updatedAlert : a)))
+                  }
+                  onClearAll={handleMarkAllAlertsRead}
+                  t={t}
+                />
+              )}
+
+              {/* Asynchronous Reports Studio */}
+              {activeNav === 'reports' && (
+                <ReportsView
+                  vehicles={vehicles}
+                  trips={trips}
+                  alerts={alerts}
+                  geofences={geofences}
+                  currentOrg={activeOrg}
+                  currentUser={effectiveUser}
+                  t={t}
+                />
+              )}
+
+              {/* Modular Add-Ons Hub */}
+              {activeNav === 'modules_hub' && (
+                <ModulesHubView
+                  currentOrg={activeOrg}
+                  organizations={organizations}
+                  currentUser={effectiveUser}
+                  onToggleModule={handleToggleModule}
+                  onNavigateToTab={setActiveNav}
+                />
+              )}
+
+              {/* Car Rental & Remote Immobilizer */}
+              {activeNav === 'car_rental' && (
+                <CarRentalView
+                  vehicles={vehicles}
+                  onToggleRelay={handleToggleRelay}
+                  onSelectVehicle={setSelectedVehicleForDetail}
+                  t={t}
+                  currentLang={currentLang}
+                />
+              )}
+
+              {/* Fuel Intelligence & Theft Detection */}
+              {activeNav === 'fuel_intelligence' && (
+                <FuelIntelligenceView
+                  vehicles={vehicles}
+                />
+              )}
+
+              {/* Cold Chain & HACCP Audit */}
+              {activeNav === 'cold_chain' && (
+                <ColdChainView
+                  vehicles={vehicles}
+                />
+              )}
+
+              {/* Live Delivery Link & e-POD */}
+              {activeNav === 'live_sharing' && (
+                <LiveShareView
+                  vehicles={vehicles}
+                />
+              )}
+
+              {/* Predictive Maintenance & OBD-II Scanner */}
+              {activeNav === 'predictive_maintenance' && (
+                <MaintenanceView
+                  vehicles={vehicles}
+                  currentOrg={activeOrg}
+                  organizations={organizations}
+                  currentUser={effectiveUser}
+                  users={users}
+                  t={t}
+                />
+              )}
+
+              {/* Usage-Based Invoicing & PDF Billing Add-On */}
+              {activeNav === 'invoicing' && (
+                <InvoicingView
+                  currentOrg={activeOrg}
+                  organizations={organizations}
+                  vehicles={vehicles}
+                  onToggleModule={handleToggleModule}
+                  onNavigateToTab={setActiveNav}
+                  t={t}
+                />
+              )}
+
+              {/* Multi-Tenant Organizations & Subscriptions */}
+              {activeNav === 'organizations' && (
+                <OrganizationsView
+                  organizations={organizations}
+                  currentUser={effectiveUser}
+                  onSelectOrg={setSelectedOrgId}
+                  selectedOrgId={selectedOrgId}
+                  onAddOrg={handleAddOrganization}
+                  onUpdateOrg={handleUpdateOrganization}
+                  onDeleteOrg={handleDeleteOrganization}
+                  onToggleModule={handleToggleModule}
+                  t={t}
+                />
+              )}
+
+              {/* Team RBAC & Permissions */}
+              {activeNav === 'users' && (
+                <UsersRbacView
+                  users={users}
+                  organizations={organizations}
+                  vehicles={vehicles}
+                  currentUser={effectiveUser}
+                  onAddUser={handleAddUser}
+                  onUpdateUser={handleUpdateUser}
+                  onDeleteUser={handleDeleteUser}
+                  onSimulateRole={(role) => setSimulatedRole(role)}
+                  t={t}
+                />
+              )}
+
+              {/* Traccar-Grade Admin System Parameters & Protocol Listener Hub */}
+              {activeNav === 'settings' && (
+                <SystemSettingsView
+                  initialConfig={systemConfig}
+                  onSaveConfig={(newConfig) => setSystemConfig(newConfig)}
+                />
+              )}
+            </div>
+          </main>
+        </div>
+      ) : (
+        <main className="flex-1 p-3 sm:p-5 max-w-7xl w-full mx-auto min-w-0">
+          {/* 1. WEB LOGIN VIEW */}
+          {appMode === 'web' && (!isAuthenticated || isLoginPreview) && (
+            <WebLoginView
+              organizations={organizations}
+              selectedOrgId={selectedOrgId}
+              onSelectOrg={setSelectedOrgId}
+              users={users}
+              onLogin={handleLogin}
+              currentLang={currentLang}
+              onLangChange={setCurrentLang}
+              t={t}
+            />
+          )}
+
+          {/* 2. REST API & WEBSOCKET STREAM EXPLORER */}
+          {appMode === 'api' && (
+            <RestApiExplorer
+              wsMessages={wsMessages}
+              onClearWs={() => setWsMessages([])}
+              isSimulating={isSimulating}
+              onToggleSimulating={handleToggleSimulation}
+              t={t}
+            />
+          )}
+
+          {/* 3. FLUTTER MOBILE APP SIMULATOR */}
+          {appMode === 'mobile' && (
+            <MobileAppFrame
+              vehicles={vehicles}
+              geofences={geofences}
+              alerts={alerts}
+              reports={reports}
+              organizations={organizations}
+              selectedOrgId={selectedOrgId}
+              onSelectOrg={setSelectedOrgId}
+              users={users}
+              currentUser={currentUser}
+              isAuthenticated={isAuthenticated}
+              onLogin={handleLogin}
+              onLogout={handleLogout}
+              currentLang={currentLang}
+              onLangChange={setCurrentLang}
+              t={t}
+            />
+          )}
+        </main>
+      )}
 
       {/* Footer Banner */}
-      <footer className="mt-8 pt-6 pb-8 border-t border-zinc-900 flex flex-wrap justify-between items-center gap-4 text-zinc-500 max-w-7xl w-full mx-auto px-4 sm:px-6">
-        <div className="text-[10px] tracking-widest text-zinc-600 uppercase flex flex-wrap items-center gap-6 font-semibold">
+      <footer className="mt-8 pt-6 pb-8 border-t border-slate-200 dark:border-zinc-900 flex flex-wrap justify-between items-center gap-4 text-slate-500 dark:text-zinc-500 max-w-7xl w-full mx-auto px-4 sm:px-6">
+        <div className="text-[10px] tracking-widest text-slate-500 dark:text-zinc-500 uppercase flex flex-wrap items-center gap-6 font-semibold">
           <span>© 2024 FlotteMaestro Enterprise</span>
           <span>Latency: ~12ms (Optimal)</span>
           <span>End-to-End Encrypted Telemetry</span>
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-mono font-bold">
+          <span className="text-[10px] uppercase tracking-widest text-slate-500 dark:text-zinc-400 font-mono font-bold">
             SYNC CORE V2.4.0
           </span>
           <div className="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_6px_#10b981]" />
@@ -735,9 +827,10 @@ export function App() {
           vehicle={selectedVehicleForDetail}
           currentUser={effectiveUser}
           onClose={() => setSelectedVehicleForDetail(null)}
-          onOpenTripReplay={() => {
+          onOpenTripReplay={(veh) => {
             setSelectedVehicleForDetail(null);
-            setActiveNav('trip_replay');
+            setSelectedVehicleForTrips(veh.id);
+            setActiveNav('trips');
           }}
           onOpenTerminal={(veh) => {
             setVehicleForCommand(veh);

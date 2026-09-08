@@ -22,6 +22,16 @@ export const TripsHistoryView: React.FC<TripsHistoryViewProps> = ({
   const [playbackSpeed, setPlaybackSpeed] = useState<number>(1);
   const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
 
+  // Sync active vehicle's trip if navigated from vehicle detail modal
+  useEffect(() => {
+    if (activeVehicleId) {
+      const match = trips.find((tr) => tr.vehicleId === activeVehicleId);
+      if (match) {
+        setSelectedTripId(match.id);
+      }
+    }
+  }, [activeVehicleId, trips]);
+
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const polylineLayerRef = useRef<L.Polyline | null>(null);
@@ -41,8 +51,9 @@ export const TripsHistoryView: React.FC<TripsHistoryViewProps> = ({
       zoomControl: false
     });
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; CARTO',
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      subdomains: 'abc',
       maxZoom: 19
     }).addTo(map);
 
@@ -240,7 +251,7 @@ export const TripsHistoryView: React.FC<TripsHistoryViewProps> = ({
 
       {/* Right Column: Replay Map & Interactive Scrubber Player (7 Cols) */}
       <div className="lg:col-span-7 flex flex-col gap-4">
-        <div className="relative flex-1 min-h-[440px] rounded-[32px] overflow-hidden border border-zinc-800 shadow-2xl bg-[#080808]">
+        <div className="relative flex-1 min-h-[440px] rounded-[32px] overflow-hidden border border-zinc-800 shadow-2xl bg-[#080808] isolate z-0">
           <div ref={mapContainerRef} className="w-full h-full" />
         </div>
 

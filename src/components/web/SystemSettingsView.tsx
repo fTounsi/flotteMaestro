@@ -27,8 +27,11 @@ import {
   Radio,
   Wifi,
   Search,
-  Code
+  Code,
+  Sun,
+  Moon
 } from 'lucide-react';
+import { useTheme } from '../../context/ThemeContext';
 import {
   SystemParametersConfig,
   SettingsPillarTab,
@@ -58,6 +61,7 @@ export const SystemSettingsView: React.FC<SystemSettingsViewProps> = ({
   initialConfig = INITIAL_SYSTEM_CONFIG,
   onSaveConfig
 }) => {
+  const { theme, setTheme } = useTheme();
   const [config, setConfig] = useState<SystemParametersConfig>(initialConfig);
   const [activeTab, setActiveTab] = useState<SettingsPillarTab>('general_units');
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -439,6 +443,72 @@ ${config.protocols
       {/* ========================================================================= */}
       {activeTab === 'general_units' && (
         <div className="space-y-6">
+          {/* Appearance & Color Scheme Card */}
+          <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-slate-200 dark:border-zinc-800 p-6 shadow-xs space-y-4">
+            <h3 className="font-bold text-sm text-slate-900 dark:text-white uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center justify-between">
+              <span>Application Theme & Appearance</span>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 lowercase">
+                current: {theme}
+              </span>
+            </h3>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <button
+                type="button"
+                onClick={() => setTheme('dark')}
+                className={`p-4 rounded-2xl border text-left transition-all flex items-start gap-3.5 ${
+                  theme === 'dark'
+                    ? 'bg-zinc-950 border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.15)] ring-1 ring-emerald-500'
+                    : 'bg-zinc-950/60 border-zinc-800 hover:border-zinc-700 opacity-70 hover:opacity-100'
+                }`}
+              >
+                <div className="w-9 h-9 rounded-xl bg-zinc-900 border border-zinc-700 flex items-center justify-center shrink-0 text-amber-400">
+                  <Moon className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-bold text-white">Obsidian Dark</span>
+                    {theme === 'dark' && (
+                      <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                        ACTIVE
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-zinc-400 mt-1">
+                    High contrast dark palette engineered for low-light command centers and night monitoring.
+                  </p>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setTheme('light')}
+                className={`p-4 rounded-2xl border text-left transition-all flex items-start gap-3.5 ${
+                  theme === 'light'
+                    ? 'bg-white border-indigo-500 shadow-md ring-1 ring-indigo-500'
+                    : 'bg-zinc-100/80 border-zinc-300 hover:border-zinc-400 opacity-70 hover:opacity-100'
+                }`}
+              >
+                <div className="w-9 h-9 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center shrink-0 text-amber-500">
+                  <Sun className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-bold text-zinc-900">Clear Light</span>
+                    {theme === 'light' && (
+                      <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-indigo-50 text-indigo-600 border border-indigo-200">
+                        ACTIVE
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-zinc-600 mt-1">
+                    Crisp, daylight optimized styling with clean slate accents and maximum readability in daylight.
+                  </p>
+                </div>
+              </button>
+            </div>
+          </div>
+
           <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-slate-200 dark:border-zinc-800 p-6 shadow-xs space-y-5">
             <h3 className="font-bold text-sm text-slate-900 dark:text-white uppercase tracking-wider text-slate-500 dark:text-slate-400">
               Server Identity & General Preferences

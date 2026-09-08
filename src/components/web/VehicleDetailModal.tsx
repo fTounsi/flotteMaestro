@@ -20,6 +20,7 @@ import {
 import { Vehicle, User } from '../../types/fleet';
 import { TranslationDictionary } from '../../translations/i18n';
 import { userHasPermission } from '../../types/rbac';
+import { VehicleTelemetryGraph } from './VehicleTelemetryGraph';
 
 interface VehicleDetailModalProps {
   vehicle: Vehicle | null;
@@ -165,6 +166,9 @@ export const VehicleDetailModal: React.FC<VehicleDetailModalProps> = ({
               </div>
             </div>
           </div>
+
+          {/* Recharts 60-Minute Real-Time Telemetry Graph */}
+          <VehicleTelemetryGraph vehicle={vehicle} />
 
           {/* Location & GPS Hardware Info */}
           <div className="bg-zinc-900/40 p-5 rounded-[24px] border border-zinc-800 space-y-3">
