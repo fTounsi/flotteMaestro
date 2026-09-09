@@ -353,13 +353,21 @@ export const LiveShareView: React.FC<LiveShareViewProps> = ({ vehicles }) => {
 
       {/* Modal: Generate Link */}
       {showCreateModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-lg w-full p-6 border border-slate-200 dark:border-slate-800 shadow-2xl space-y-4 animate-scaleUp">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
-              <h3 className="font-bold text-slate-900 dark:text-white text-base">
-                Create Customer Live Tracking Link
-              </h3>
-              <button onClick={() => setShowCreateModal(false)} className="text-slate-400 hover:text-slate-600">
+        <div className="fixed inset-0 z-50 bg-slate-900/60 dark:bg-black/85 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white dark:bg-[#09090b] rounded-[32px] max-w-2xl w-full p-6 sm:p-8 border border-slate-200 dark:border-zinc-800 shadow-2xl space-y-5 animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-zinc-800">
+              <div>
+                <h3 className="font-black text-slate-900 dark:text-white text-lg">
+                  Create Customer Live Tracking Link
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-zinc-400">
+                  Generate an expiring client portal link with live GPS ETA and delivery proof.
+                </p>
+              </div>
+              <button
+                onClick={() => setShowCreateModal(false)}
+                className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-zinc-900 text-slate-400 hover:text-white border border-slate-200 dark:border-zinc-800"
+              >
                 <X className="w-5 h-5" />
               </button>
             </div>

@@ -22,6 +22,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { Vehicle } from '../../types/fleet';
+import { useTheme } from '../../context/ThemeContext';
 
 interface VehicleTelemetryGraphProps {
   vehicle: Vehicle;
@@ -110,6 +111,7 @@ function generateLast60MinTelemetry(vehicle: Vehicle): TelemetryDataPoint[] {
 }
 
 export const VehicleTelemetryGraph: React.FC<VehicleTelemetryGraphProps> = ({ vehicle }) => {
+  const { isDark } = useTheme();
   const [activeMetric, setActiveMetric] = useState<'all' | 'speed' | 'ignition' | 'battery'>('all');
   const [refreshKey, setRefreshKey] = useState(0);
 
@@ -130,31 +132,31 @@ export const VehicleTelemetryGraph: React.FC<VehicleTelemetryGraphProps> = ({ ve
   ).toFixed(1);
 
   return (
-    <div className="bg-[#0c0c0e] rounded-3xl border border-zinc-800/90 p-5 space-y-4 shadow-xl text-white">
+    <div className="bg-white dark:bg-[#0c0c0e] rounded-3xl border border-slate-200 dark:border-zinc-800/90 p-5 space-y-4 shadow-sm dark:shadow-xl text-slate-900 dark:text-white transition-colors">
       {/* Header with Title and Mode Switcher */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-zinc-800/80">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-100 dark:border-zinc-800/80">
         <div>
           <div className="flex items-center gap-2 mb-0.5">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-[10px] uppercase font-bold tracking-widest text-emerald-400 font-mono">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-[10px] uppercase font-bold tracking-widest text-emerald-600 dark:text-emerald-400 font-mono">
               Live OBD-II & CAN-Bus Stream (Last 60 Minutes)
             </span>
           </div>
-          <h4 className="text-base font-bold text-white flex items-center gap-2">
-            <Activity className="w-4 h-4 text-emerald-400" />
+          <h4 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <Activity className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
             <span>Real-Time Telemetry Stream</span>
           </h4>
         </div>
 
         {/* Metric Mode Filter Pills */}
-        <div className="flex flex-wrap items-center gap-1.5 bg-zinc-900/80 p-1 rounded-2xl border border-zinc-800">
+        <div className="flex flex-wrap items-center gap-1.5 bg-slate-100 dark:bg-zinc-900/80 p-1 rounded-2xl border border-slate-200 dark:border-zinc-800">
           <button
             type="button"
             onClick={() => setActiveMetric('all')}
             className={`px-3 py-1 rounded-xl text-xs font-bold transition-all ${
               activeMetric === 'all'
-                ? 'bg-emerald-500 text-black shadow-md'
-                : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
+                ? 'bg-emerald-500 text-white dark:text-black shadow-xs'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200 dark:text-zinc-400 dark:hover:text-white dark:hover:bg-zinc-800'
             }`}
           >
             All Telemetry
@@ -164,8 +166,8 @@ export const VehicleTelemetryGraph: React.FC<VehicleTelemetryGraphProps> = ({ ve
             onClick={() => setActiveMetric('speed')}
             className={`px-3 py-1 rounded-xl text-xs font-bold transition-all flex items-center gap-1 ${
               activeMetric === 'speed'
-                ? 'bg-emerald-500 text-black shadow-md'
-                : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
+                ? 'bg-emerald-500 text-white dark:text-black shadow-xs'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200 dark:text-zinc-400 dark:hover:text-white dark:hover:bg-zinc-800'
             }`}
           >
             <Gauge className="w-3 h-3" />
@@ -176,8 +178,8 @@ export const VehicleTelemetryGraph: React.FC<VehicleTelemetryGraphProps> = ({ ve
             onClick={() => setActiveMetric('ignition')}
             className={`px-3 py-1 rounded-xl text-xs font-bold transition-all flex items-center gap-1 ${
               activeMetric === 'ignition'
-                ? 'bg-amber-500 text-black shadow-md'
-                : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
+                ? 'bg-amber-500 text-white dark:text-black shadow-xs'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200 dark:text-zinc-400 dark:hover:text-white dark:hover:bg-zinc-800'
             }`}
           >
             <Power className="w-3 h-3" />
@@ -188,8 +190,8 @@ export const VehicleTelemetryGraph: React.FC<VehicleTelemetryGraphProps> = ({ ve
             onClick={() => setActiveMetric('battery')}
             className={`px-3 py-1 rounded-xl text-xs font-bold transition-all flex items-center gap-1 ${
               activeMetric === 'battery'
-                ? 'bg-cyan-400 text-black shadow-md'
-                : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
+                ? 'bg-cyan-500 text-white dark:bg-cyan-400 dark:text-black shadow-xs'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200 dark:text-zinc-400 dark:hover:text-white dark:hover:bg-zinc-800'
             }`}
           >
             <Zap className="w-3 h-3" />
@@ -200,7 +202,7 @@ export const VehicleTelemetryGraph: React.FC<VehicleTelemetryGraphProps> = ({ ve
             type="button"
             onClick={() => setRefreshKey((k) => k + 1)}
             title="Refresh stream sampling"
-            className="p-1 rounded-xl text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors ml-1"
+            className="p-1 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-200 dark:text-zinc-400 dark:hover:text-white dark:hover:bg-zinc-800 transition-colors ml-1"
           >
             <RefreshCw className="w-3.5 h-3.5" />
           </button>
@@ -209,43 +211,43 @@ export const VehicleTelemetryGraph: React.FC<VehicleTelemetryGraphProps> = ({ ve
 
       {/* Metric Highlights Ribbon */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-        <div className="bg-zinc-900/50 p-2.5 rounded-2xl border border-zinc-800/80">
-          <div className="flex items-center justify-between text-zinc-400 text-[10px] uppercase font-semibold">
+        <div className="bg-slate-50 dark:bg-zinc-900/50 p-2.5 rounded-2xl border border-slate-200 dark:border-zinc-800/80">
+          <div className="flex items-center justify-between text-slate-500 dark:text-zinc-400 text-[10px] uppercase font-semibold">
             <span>Peak Speed</span>
-            <Gauge className="w-3 h-3 text-emerald-400" />
+            <Gauge className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
           </div>
-          <div className="text-lg font-mono font-black text-emerald-400 mt-0.5">
-            {maxSpeed} <span className="text-xs font-normal text-zinc-500">km/h</span>
+          <div className="text-lg font-mono font-black text-emerald-600 dark:text-emerald-400 mt-0.5">
+            {maxSpeed} <span className="text-xs font-normal text-slate-500 dark:text-zinc-500">km/h</span>
           </div>
         </div>
 
-        <div className="bg-zinc-900/50 p-2.5 rounded-2xl border border-zinc-800/80">
-          <div className="flex items-center justify-between text-zinc-400 text-[10px] uppercase font-semibold">
+        <div className="bg-slate-50 dark:bg-zinc-900/50 p-2.5 rounded-2xl border border-slate-200 dark:border-zinc-800/80">
+          <div className="flex items-center justify-between text-slate-500 dark:text-zinc-400 text-[10px] uppercase font-semibold">
             <span>60m Avg Speed</span>
-            <TrendingUp className="w-3 h-3 text-emerald-400" />
+            <TrendingUp className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
           </div>
-          <div className="text-lg font-mono font-black text-white mt-0.5">
-            {avgSpeed} <span className="text-xs font-normal text-zinc-500">km/h</span>
+          <div className="text-lg font-mono font-black text-slate-900 dark:text-white mt-0.5">
+            {avgSpeed} <span className="text-xs font-normal text-slate-500 dark:text-zinc-500">km/h</span>
           </div>
         </div>
 
-        <div className="bg-zinc-900/50 p-2.5 rounded-2xl border border-zinc-800/80">
-          <div className="flex items-center justify-between text-zinc-400 text-[10px] uppercase font-semibold">
+        <div className="bg-slate-50 dark:bg-zinc-900/50 p-2.5 rounded-2xl border border-slate-200 dark:border-zinc-800/80">
+          <div className="flex items-center justify-between text-slate-500 dark:text-zinc-400 text-[10px] uppercase font-semibold">
             <span>Ignition Duty</span>
-            <Power className="w-3 h-3 text-amber-400" />
+            <Power className="w-3 h-3 text-amber-500 dark:text-amber-400" />
           </div>
-          <div className="text-lg font-mono font-black text-amber-400 mt-0.5">
-            {ignitionPct}% <span className="text-xs font-normal text-zinc-500">active</span>
+          <div className="text-lg font-mono font-black text-amber-600 dark:text-amber-400 mt-0.5">
+            {ignitionPct}% <span className="text-xs font-normal text-slate-500 dark:text-zinc-500">active</span>
           </div>
         </div>
 
-        <div className="bg-zinc-900/50 p-2.5 rounded-2xl border border-zinc-800/80">
-          <div className="flex items-center justify-between text-zinc-400 text-[10px] uppercase font-semibold">
+        <div className="bg-slate-50 dark:bg-zinc-900/50 p-2.5 rounded-2xl border border-slate-200 dark:border-zinc-800/80">
+          <div className="flex items-center justify-between text-slate-500 dark:text-zinc-400 text-[10px] uppercase font-semibold">
             <span>Battery / Alt.</span>
-            <Zap className="w-3 h-3 text-cyan-400" />
+            <Zap className="w-3 h-3 text-cyan-600 dark:text-cyan-400" />
           </div>
-          <div className="text-lg font-mono font-black text-cyan-400 mt-0.5">
-            {avgVoltage}V <span className="text-xs font-normal text-zinc-500">avg</span>
+          <div className="text-lg font-mono font-black text-cyan-600 dark:text-cyan-400 mt-0.5">
+            {avgVoltage}V <span className="text-xs font-normal text-slate-500 dark:text-zinc-500">avg</span>
           </div>
         </div>
       </div>
@@ -262,8 +264,8 @@ export const VehicleTelemetryGraph: React.FC<VehicleTelemetryGraphProps> = ({ ve
               </linearGradient>
               {/* Battery Voltage Gradient */}
               <linearGradient id="voltageGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#22d3ee" stopOpacity={0.35} />
-                <stop offset="95%" stopColor="#22d3ee" stopOpacity={0.0} />
+                <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.35} />
+                <stop offset="95%" stopColor="#06b6d4" stopOpacity={0.0} />
               </linearGradient>
               {/* Ignition Gradient */}
               <linearGradient id="ignitionGradient" x1="0" y1="0" x2="0" y2="1">
@@ -272,14 +274,14 @@ export const VehicleTelemetryGraph: React.FC<VehicleTelemetryGraphProps> = ({ ve
               </linearGradient>
             </defs>
 
-            <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />
+            <CartesianGrid strokeDasharray="3 3" stroke={isDark ? '#27272a' : '#e2e8f0'} vertical={false} />
 
             <XAxis
               dataKey="time"
-              stroke="#71717a"
+              stroke={isDark ? '#71717a' : '#94a3b8'}
               fontSize={11}
               tickLine={false}
-              axisLine={{ stroke: '#27272a' }}
+              axisLine={{ stroke: isDark ? '#27272a' : '#e2e8f0' }}
             />
 
             {/* Left Y Axis for Speed (km/h) */}
@@ -300,7 +302,7 @@ export const VehicleTelemetryGraph: React.FC<VehicleTelemetryGraphProps> = ({ ve
               <YAxis
                 yAxisId="voltage"
                 orientation="right"
-                stroke="#22d3ee"
+                stroke="#06b6d4"
                 fontSize={11}
                 tickLine={false}
                 axisLine={false}
@@ -331,35 +333,35 @@ export const VehicleTelemetryGraph: React.FC<VehicleTelemetryGraphProps> = ({ ve
                 if (!data) return null;
 
                 return (
-                  <div className="bg-[#121214] border border-zinc-700 p-3 rounded-2xl shadow-2xl text-xs space-y-1.5 font-sans min-w-[190px]">
-                    <div className="flex items-center justify-between border-b border-zinc-800 pb-1 font-mono text-[11px] text-zinc-400">
+                  <div className="bg-white dark:bg-[#121214] border border-slate-200 dark:border-zinc-700 p-3 rounded-2xl shadow-xl text-xs space-y-1.5 font-sans min-w-[190px] text-slate-900 dark:text-white">
+                    <div className="flex items-center justify-between border-b border-slate-100 dark:border-zinc-800 pb-1 font-mono text-[11px] text-slate-500 dark:text-zinc-400">
                       <span>Time: {label}</span>
-                      <span className="text-zinc-500">
+                      <span className="text-slate-400 dark:text-zinc-500">
                         {data.minutesAgo === 0 ? 'Live Now' : `-${data.minutesAgo}m ago`}
                       </span>
                     </div>
 
                     <div className="space-y-1 pt-0.5">
                       <div className="flex items-center justify-between">
-                        <span className="flex items-center gap-1.5 text-zinc-300">
-                          <Gauge className="w-3.5 h-3.5 text-emerald-400" />
+                        <span className="flex items-center gap-1.5 text-slate-600 dark:text-zinc-300">
+                          <Gauge className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                           <span>Speed:</span>
                         </span>
-                        <span className="font-mono font-bold text-emerald-400 text-sm">
+                        <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400 text-sm">
                           {data.speed} km/h
                         </span>
                       </div>
 
                       <div className="flex items-center justify-between">
-                        <span className="flex items-center gap-1.5 text-zinc-300">
-                          <Power className="w-3.5 h-3.5 text-amber-400" />
+                        <span className="flex items-center gap-1.5 text-slate-600 dark:text-zinc-300">
+                          <Power className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" />
                           <span>Ignition:</span>
                         </span>
                         <span
                           className={`font-mono font-bold px-1.5 py-0.2 rounded text-[10px] ${
                             data.ignition === 1
-                              ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
-                              : 'bg-zinc-800 text-zinc-400'
+                              ? 'bg-amber-100 text-amber-800 dark:bg-amber-500/20 dark:text-amber-400 border border-amber-200 dark:border-amber-500/30'
+                              : 'bg-slate-100 text-slate-600 dark:bg-zinc-800 dark:text-zinc-400'
                           }`}
                         >
                           {data.ignition === 1 ? 'ACTIVE (ON)' : 'OFF (STANDBY)'}
@@ -367,21 +369,21 @@ export const VehicleTelemetryGraph: React.FC<VehicleTelemetryGraphProps> = ({ ve
                       </div>
 
                       <div className="flex items-center justify-between">
-                        <span className="flex items-center gap-1.5 text-zinc-300">
-                          <Zap className="w-3.5 h-3.5 text-cyan-400" />
+                        <span className="flex items-center gap-1.5 text-slate-600 dark:text-zinc-300">
+                          <Zap className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
                           <span>Voltage:</span>
                         </span>
-                        <span className="font-mono font-bold text-cyan-400">
+                        <span className="font-mono font-bold text-cyan-600 dark:text-cyan-400">
                           {data.batteryVoltage} V{' '}
-                          <span className="text-[10px] text-zinc-500 font-normal">
+                          <span className="text-[10px] text-slate-500 dark:text-zinc-500 font-normal">
                             ({data.ignition === 1 ? 'Alternator' : 'Resting'})
                           </span>
                         </span>
                       </div>
 
-                      <div className="flex items-center justify-between text-zinc-400 text-[11px] pt-1 border-t border-zinc-800/80">
+                      <div className="flex items-center justify-between text-slate-500 dark:text-zinc-400 text-[11px] pt-1 border-t border-slate-100 dark:border-zinc-800/80">
                         <span>Battery Level:</span>
-                        <span className="font-mono font-semibold text-white">
+                        <span className="font-mono font-semibold text-slate-900 dark:text-white">
                           {data.batteryLevel}%
                         </span>
                       </div>
@@ -413,12 +415,12 @@ export const VehicleTelemetryGraph: React.FC<VehicleTelemetryGraphProps> = ({ ve
                 type="monotone"
                 dataKey="batteryVoltage"
                 name="Battery Voltage (V)"
-                stroke="#22d3ee"
+                stroke="#06b6d4"
                 strokeWidth={2}
                 fillOpacity={1}
                 fill="url(#voltageGradient)"
                 dot={false}
-                activeDot={{ r: 4, fill: '#22d3ee' }}
+                activeDot={{ r: 4, fill: '#06b6d4' }}
               />
             )}
 
@@ -439,23 +441,23 @@ export const VehicleTelemetryGraph: React.FC<VehicleTelemetryGraphProps> = ({ ve
       </div>
 
       {/* Legend Footer */}
-      <div className="flex flex-wrap items-center justify-between text-xs text-zinc-400 pt-2 border-t border-zinc-800/80 font-mono text-[11px]">
+      <div className="flex flex-wrap items-center justify-between text-xs text-slate-600 dark:text-zinc-400 pt-2 border-t border-slate-100 dark:border-zinc-800/80 font-mono text-[11px]">
         <div className="flex items-center gap-4">
           <span className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
             <span>Speed (km/h)</span>
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-amber-400" />
+            <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
             <span>Ignition (State)</span>
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-cyan-400" />
+            <span className="w-2.5 h-2.5 rounded-full bg-cyan-500" />
             <span>Voltage (12V/14V)</span>
           </span>
         </div>
 
-        <div className="flex items-center gap-1.5 text-zinc-500">
+        <div className="flex items-center gap-1.5 text-slate-400 dark:text-zinc-500">
           <Clock className="w-3.5 h-3.5" />
           <span>Stream Resolution: 5 min CAN-bus intervals</span>
         </div>

@@ -1,4 +1,4 @@
-export type AppMode = 'web' | 'mobile' | 'api';
+export type AppMode = 'web' | 'mobile' | 'api' | 'mobile_standalone';
 
 export type ModuleKey =
   | 'car_rental'
@@ -35,7 +35,8 @@ export type NavigationTab =
   | 'invoicing'
   | 'organizations'
   | 'users'
-  | 'settings';
+  | 'settings'
+  | 'documentation';
 
 export type VehicleStatus = 'moving' | 'idle' | 'stopped' | 'offline';
 
@@ -219,7 +220,33 @@ export interface Alert {
   assignedTo?: string;
   resolutionNotes?: string;
   resolvedAt?: string;
+  ruleId?: string;
+  alertName?: string;
+  triggerValue?: string | number;
+  thresholdValue?: string | number;
   createdAt: string;
+}
+
+export interface AlertRule {
+  id: string;
+  organizationId: string;
+  name: string;
+  vehicleId: string; // 'all' or specific vehicleId
+  vehiclePlate?: string;
+  vehicleName?: string;
+  type: AlertType;
+  value: string | number;
+  unit?: string;
+  severity: AlertSeverity;
+  channels: ('sound' | 'notification' | 'email' | 'relay_cut')[];
+  description?: string;
+  enabled: boolean;
+  createdBy?: string;
+  createdByRole?: string;
+  createdAt: string;
+  updatedAt?: string;
+  lastTriggeredAt?: string;
+  triggerCount?: number;
 }
 
 export interface Trip {
@@ -473,6 +500,81 @@ export interface RentalVehicleConfig {
   transmission: 'Manual' | 'Automatic';
   seats: number;
   features: string[];
+}
+
+export interface RelayCommandLog {
+  id: string;
+  vehicleId: string;
+  vehiclePlate: string;
+  vehicleModel: string;
+  contractNumber?: string;
+  renterName?: string;
+  action: 'cut_off' | 'restore';
+  status: 'executed' | 'pending_ack' | 'failed' | 'cancelled';
+  speedKmhAtExecution: number;
+  safetyCheckPassed: boolean;
+  reason: 'theft_suspected' | 'overdue_nonpayment' | 'unauthorized_zone_exit' | 'curfew_violation' | 'customer_emergency' | 'maintenance_test' | 'manual_operator';
+  protocolCommand: string;
+  operatorName: string;
+  operatorRole: string;
+  timestamp: string;
+  locationName: string;
+  coordinates: [number, number];
+  notes?: string;
+}
+
+export interface RentalSecurityDepositRecord {
+  id: string;
+  contractNumber: string;
+  renterName: string;
+  renterPhone: string;
+  vehiclePlate: string;
+  vehicleModel: string;
+  depositAmountUsd: number;
+  paymentMethod: 'credit_card_preauth' | 'cash' | 'check' | 'bank_transfer';
+  heldAt: string;
+  releasedAt?: string;
+  status: 'held' | 'fully_refunded' | 'partially_deducted' | 'forfeited';
+  deductions: {
+    reason: string;
+    amountUsd: number;
+  }[];
+  netRefundedUsd: number;
+  reconciledBy: string;
+}
+
+export interface RentalCustomerProfile {
+  id: string;
+  fullName: string;
+  phone: string;
+  email: string;
+  cinOrPassport: string;
+  driverLicenseNumber: string;
+  licenseIssueDate?: string;
+  ratingScore: number;
+  totalRentalsCount: number;
+  totalSpentUsd: number;
+  statusTag: 'vip' | 'regular' | 'warning' | 'blacklisted';
+  lastRentalDate: string;
+  notes: string;
+  incidentHistoryCount: number;
+}
+
+export interface RentalTerritoryViolation {
+  id: string;
+  contractNumber: string;
+  vehiclePlate: string;
+  vehicleModel: string;
+  renterName: string;
+  renterPhone: string;
+  violationType: 'border_crossing' | 'restricted_zone' | 'curfew_night_driving' | 'excessive_speed';
+  timestamp: string;
+  speedKmh: number;
+  locationName: string;
+  coordinates: [number, number];
+  severity: 'critical' | 'warning';
+  relayCutoffRecommended: boolean;
+  status: 'active_alert' | 'contacted_renter' | 'immobilized' | 'resolved';
 }
 
 

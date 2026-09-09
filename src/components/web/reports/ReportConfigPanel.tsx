@@ -92,15 +92,15 @@ export const ReportConfigPanel: React.FC<ReportConfigPanelProps> = ({
   onGenerateReport
 }) => {
   return (
-    <div className="bg-zinc-900/40 border border-zinc-800 rounded-[28px] p-5 shadow-2xl space-y-5">
+    <div className="bg-white dark:bg-zinc-900/40 border border-slate-200 dark:border-zinc-800 rounded-[28px] p-5 shadow-sm dark:shadow-2xl space-y-5">
       {/* 2. REPORT TEMPLATE TYPE */}
       <div className="space-y-3">
-        <div className="flex items-center justify-between border-b border-zinc-800/80 pb-2">
+        <div className="flex items-center justify-between border-b border-slate-100 dark:border-zinc-800/80 pb-2">
           <div className="flex items-center gap-2">
-            <span className="p-1.5 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+            <span className="p-1.5 rounded-lg bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 border border-indigo-500/20">
               <FileText className="w-4 h-4" />
             </span>
-            <h4 className="text-xs font-black uppercase tracking-widest text-zinc-300">
+            <h4 className="text-xs font-black uppercase tracking-widest text-slate-800 dark:text-zinc-300">
               2. Report Subject & Analytics Type
             </h4>
           </div>
@@ -115,8 +115,8 @@ export const ReportConfigPanel: React.FC<ReportConfigPanelProps> = ({
                 onClick={() => onConfigChange({ reportType: type.id as any })}
                 className={`p-3 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between gap-2 select-none group ${
                   isSelected
-                    ? 'bg-zinc-900 border-emerald-500 shadow-md shadow-emerald-500/10 ring-1 ring-emerald-500'
-                    : 'bg-zinc-950/80 border-zinc-800 hover:border-zinc-700 hover:bg-zinc-900/60'
+                    ? 'bg-emerald-50 dark:bg-zinc-900 border-emerald-500 shadow-md shadow-emerald-500/10 ring-1 ring-emerald-500'
+                    : 'bg-slate-50 dark:bg-zinc-950/80 border-slate-200 dark:border-zinc-800 hover:border-slate-300 dark:hover:border-zinc-700 hover:bg-slate-100 dark:hover:bg-zinc-900/60'
                 }`}
               >
                 <div className="flex items-start justify-between">
@@ -124,21 +124,21 @@ export const ReportConfigPanel: React.FC<ReportConfigPanelProps> = ({
                     className={`p-2 rounded-xl ${
                       isSelected
                         ? 'bg-emerald-500 text-black'
-                        : 'bg-zinc-900 text-zinc-400 group-hover:text-white'
+                        : 'bg-slate-200 dark:bg-zinc-900 text-slate-600 dark:text-zinc-400 group-hover:text-slate-900 dark:group-hover:text-white'
                     }`}
                   >
                     {type.icon}
                   </div>
                   {isSelected && (
-                    <span className="text-[10px] font-mono font-bold uppercase text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
+                    <span className="text-[10px] font-mono font-bold uppercase text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
                       Active
                     </span>
                   )}
                 </div>
 
                 <div>
-                  <h5 className="text-xs font-black text-white leading-snug">{type.title}</h5>
-                  <p className="text-[10px] text-zinc-400 mt-1 line-clamp-2 leading-relaxed">
+                  <h5 className="text-xs font-black text-slate-900 dark:text-white leading-snug">{type.title}</h5>
+                  <p className="text-[10px] text-slate-500 dark:text-zinc-400 mt-1 line-clamp-2 leading-relaxed">
                     {type.desc}
                   </p>
                 </div>
@@ -150,12 +150,12 @@ export const ReportConfigPanel: React.FC<ReportConfigPanelProps> = ({
 
       {/* 3. TIMEFRAME & CUSTOM RANGE */}
       <div className="space-y-3 pt-2">
-        <div className="flex items-center justify-between border-b border-zinc-800/80 pb-2">
+        <div className="flex items-center justify-between border-b border-slate-100 dark:border-zinc-800/80 pb-2">
           <div className="flex items-center gap-2">
-            <span className="p-1.5 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20">
+            <span className="p-1.5 rounded-lg bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20">
               <Calendar className="w-4 h-4" />
             </span>
-            <h4 className="text-xs font-black uppercase tracking-widest text-zinc-300">
+            <h4 className="text-xs font-black uppercase tracking-widest text-slate-800 dark:text-zinc-300">
               3. Time Period & Horizon
             </h4>
           </div>
@@ -180,7 +180,7 @@ export const ReportConfigPanel: React.FC<ReportConfigPanelProps> = ({
                 className={`py-2 px-2.5 rounded-xl text-xs font-bold transition-all text-center ${
                   isSelected
                     ? 'bg-emerald-500 text-black font-black shadow-md'
-                    : 'bg-zinc-950 border border-zinc-800 text-zinc-300 hover:bg-zinc-900 hover:text-white'
+                    : 'bg-slate-100 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 text-slate-700 dark:text-zinc-300 hover:bg-slate-200 dark:hover:bg-zinc-900 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 {period.label}
@@ -191,27 +191,27 @@ export const ReportConfigPanel: React.FC<ReportConfigPanelProps> = ({
 
         {/* Custom Range Inputs */}
         {config.timePeriod === 'custom' && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3.5 rounded-2xl bg-zinc-950 border border-zinc-800">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3.5 rounded-2xl bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800">
             <div>
-              <label className="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-1">
+              <label className="block text-[11px] font-bold text-slate-600 dark:text-zinc-400 uppercase tracking-wider mb-1">
                 Start Date
               </label>
               <input
                 type="date"
                 value={config.customStartDate || ''}
                 onChange={(e) => onConfigChange({ customStartDate: e.target.value })}
-                className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"
+                className="w-full bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-700 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500"
               />
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-1">
+              <label className="block text-[11px] font-bold text-slate-600 dark:text-zinc-400 uppercase tracking-wider mb-1">
                 End Date
               </label>
               <input
                 type="date"
                 value={config.customEndDate || ''}
                 onChange={(e) => onConfigChange({ customEndDate: e.target.value })}
-                className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"
+                className="w-full bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-700 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500"
               />
             </div>
           </div>
@@ -220,22 +220,22 @@ export const ReportConfigPanel: React.FC<ReportConfigPanelProps> = ({
 
       {/* 4. ADVANCED TELEMETRY PARAMETERS */}
       <div className="space-y-3 pt-2">
-        <div className="flex items-center justify-between border-b border-zinc-800/80 pb-2">
+        <div className="flex items-center justify-between border-b border-slate-100 dark:border-zinc-800/80 pb-2">
           <div className="flex items-center gap-2">
-            <span className="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+            <span className="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 border border-cyan-500/20">
               <Sliders className="w-4 h-4" />
             </span>
-            <h4 className="text-xs font-black uppercase tracking-widest text-zinc-300">
+            <h4 className="text-xs font-black uppercase tracking-widest text-slate-800 dark:text-zinc-300">
               4. Calculation Parameters & Filters
             </h4>
           </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div className="p-3 rounded-2xl bg-zinc-950 border border-zinc-800 flex items-center justify-between">
+          <div className="p-3 rounded-2xl bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 flex items-center justify-between">
             <div>
-              <p className="text-xs font-bold text-white">Idle Fuel Analysis</p>
-              <p className="text-[10px] text-zinc-400">Compute engine idle waste</p>
+              <p className="text-xs font-bold text-slate-900 dark:text-white">Idle Fuel Analysis</p>
+              <p className="text-[10px] text-slate-500 dark:text-zinc-400">Compute engine idle waste</p>
             </div>
             <input
               type="checkbox"
@@ -245,10 +245,10 @@ export const ReportConfigPanel: React.FC<ReportConfigPanelProps> = ({
             />
           </div>
 
-          <div className="p-3 rounded-2xl bg-zinc-950 border border-zinc-800">
+          <div className="p-3 rounded-2xl bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800">
             <div className="flex justify-between items-center mb-1">
-              <label className="text-xs font-bold text-white">Fuel Cost Unit ($/L)</label>
-              <span className="text-[10px] font-mono text-emerald-400 font-bold">
+              <label className="text-xs font-bold text-slate-900 dark:text-white">Fuel Cost Unit ($/L)</label>
+              <span className="text-[10px] font-mono text-emerald-700 dark:text-emerald-400 font-bold">
                 ${config.fuelPricePerLiter.toFixed(2)}
               </span>
             </div>
@@ -259,14 +259,14 @@ export const ReportConfigPanel: React.FC<ReportConfigPanelProps> = ({
               max="5.0"
               value={config.fuelPricePerLiter}
               onChange={(e) => onConfigChange({ fuelPricePerLiter: parseFloat(e.target.value) || 1.35 })}
-              className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-2.5 py-1 text-xs text-white focus:outline-none"
+              className="w-full bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-700 rounded-xl px-2.5 py-1 text-xs text-slate-900 dark:text-white focus:outline-none"
             />
           </div>
 
-          <div className="p-3 rounded-2xl bg-zinc-950 border border-zinc-800">
+          <div className="p-3 rounded-2xl bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800">
             <div className="flex justify-between items-center mb-1">
-              <label className="text-xs font-bold text-white">Speed Limit Trigger</label>
-              <span className="text-[10px] font-mono text-amber-400 font-bold">
+              <label className="text-xs font-bold text-slate-900 dark:text-white">Speed Limit Trigger</label>
+              <span className="text-[10px] font-mono text-amber-700 dark:text-amber-400 font-bold">
                 {config.speedThresholdKmH} km/h
               </span>
             </div>
@@ -277,19 +277,19 @@ export const ReportConfigPanel: React.FC<ReportConfigPanelProps> = ({
               max="160"
               value={config.speedThresholdKmH}
               onChange={(e) => onConfigChange({ speedThresholdKmH: parseInt(e.target.value) || 90 })}
-              className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-2.5 py-1 text-xs text-white focus:outline-none"
+              className="w-full bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-700 rounded-xl px-2.5 py-1 text-xs text-slate-900 dark:text-white focus:outline-none"
             />
           </div>
         </div>
       </div>
 
       {/* 5. GENERATE & EXPORT CONTROLS */}
-      <div className="pt-3 border-t border-zinc-800/80 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div className="pt-3 border-t border-slate-100 dark:border-zinc-800/80 flex flex-col sm:flex-row items-center justify-between gap-3">
         <button
           type="button"
           onClick={() => onGenerateReport('preview')}
           disabled={isGenerating}
-          className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-black transition-all shadow-xl shadow-emerald-500/20 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+          className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-black transition-all shadow-md sm:shadow-xl shadow-emerald-500/20 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
         >
           {isGenerating ? (
             <>
@@ -309,10 +309,10 @@ export const ReportConfigPanel: React.FC<ReportConfigPanelProps> = ({
             type="button"
             onClick={() => onGenerateReport('pdf')}
             disabled={isGenerating}
-            className="flex-1 sm:flex-initial px-4 py-3 rounded-2xl bg-zinc-950 hover:bg-zinc-800 text-white text-xs font-bold border border-zinc-800 flex items-center justify-center gap-2 transition-colors"
+            className="flex-1 sm:flex-initial px-4 py-3 rounded-2xl bg-slate-100 dark:bg-zinc-950 hover:bg-slate-200 dark:hover:bg-zinc-800 text-slate-900 dark:text-white text-xs font-bold border border-slate-200 dark:border-zinc-800 flex items-center justify-center gap-2 transition-colors"
             title="Download PDF format"
           >
-            <Download className="w-3.5 h-3.5 text-rose-400" />
+            <Download className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
             <span>PDF</span>
           </button>
 
@@ -320,10 +320,10 @@ export const ReportConfigPanel: React.FC<ReportConfigPanelProps> = ({
             type="button"
             onClick={() => onGenerateReport('xlsx')}
             disabled={isGenerating}
-            className="flex-1 sm:flex-initial px-4 py-3 rounded-2xl bg-zinc-950 hover:bg-zinc-800 text-white text-xs font-bold border border-zinc-800 flex items-center justify-center gap-2 transition-colors"
+            className="flex-1 sm:flex-initial px-4 py-3 rounded-2xl bg-slate-100 dark:bg-zinc-950 hover:bg-slate-200 dark:hover:bg-zinc-800 text-slate-900 dark:text-white text-xs font-bold border border-slate-200 dark:border-zinc-800 flex items-center justify-center gap-2 transition-colors"
             title="Download Excel spreadsheet"
           >
-            <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-400" />
+            <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
             <span>XLSX / CSV</span>
           </button>
 
@@ -331,10 +331,10 @@ export const ReportConfigPanel: React.FC<ReportConfigPanelProps> = ({
             type="button"
             onClick={() => onGenerateReport('json')}
             disabled={isGenerating}
-            className="flex-1 sm:flex-initial px-4 py-3 rounded-2xl bg-zinc-950 hover:bg-zinc-800 text-white text-xs font-bold border border-zinc-800 flex items-center justify-center gap-2 transition-colors"
+            className="flex-1 sm:flex-initial px-4 py-3 rounded-2xl bg-slate-100 dark:bg-zinc-950 hover:bg-slate-200 dark:hover:bg-zinc-800 text-slate-900 dark:text-white text-xs font-bold border border-slate-200 dark:border-zinc-800 flex items-center justify-center gap-2 transition-colors"
             title="Download JSON Telemetry"
           >
-            <FileCode className="w-3.5 h-3.5 text-indigo-400" />
+            <FileCode className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
             <span>JSON</span>
           </button>
         </div>

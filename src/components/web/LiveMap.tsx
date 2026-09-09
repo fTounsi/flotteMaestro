@@ -19,6 +19,8 @@ import {
   Maximize2,
   Minimize2,
   Sliders,
+  SlidersHorizontal,
+  ArrowDownWideNarrow,
   Sparkles,
   Activity,
   Crosshair,
@@ -32,6 +34,7 @@ import {
 } from 'lucide-react';
 import { TranslationDictionary } from '../../translations/i18n';
 import { userHasPermission } from '../../types/rbac';
+import { buildLeafletVehicleMarkerHtml, VehicleMiniatureIcon } from '../common/VehicleMiniatureIcon';
 
 interface LiveMapProps {
   vehicles: Vehicle[];
@@ -54,6 +57,17 @@ export const LiveMap: React.FC<LiveMapProps> = ({
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(vehicles[0] || null);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'moving' | 'idle' | 'stopped' | 'offline'>('all');
+  const [sortBy, setSortBy] = useState<
+    | 'default'
+    | 'battery_asc'
+    | 'battery_desc'
+    | 'fuel_asc'
+    | 'fuel_desc'
+    | 'distance_desc'
+    | 'last_seen_desc'
+    | 'last_seen_asc'
+    | 'speed_desc'
+  >('default');
   const [clusteringEnabled, setClusteringEnabled] = useState<boolean>(true);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [showDrawerInExpanded, setShowDrawerInExpanded] = useState<boolean>(true);
@@ -262,6 +276,31 @@ export const LiveMap: React.FC<LiveMapProps> = ({
     return matchesSearch && matchesStatus;
   });
 
+  // Sorted vehicles by criteria (Battery, Fuel, Distance, Last Seen, etc.)
+  const sortedVehicles = [...filteredVehicles].sort((a, b) => {
+    switch (sortBy) {
+      case 'battery_asc':
+        return (a.latestPosition?.battery ?? 100) - (b.latestPosition?.battery ?? 100);
+      case 'battery_desc':
+        return (b.latestPosition?.battery ?? 0) - (a.latestPosition?.battery ?? 0);
+      case 'fuel_asc':
+        return (a.fuelLevelPercent ?? 100) - (b.fuelLevelPercent ?? 100);
+      case 'fuel_desc':
+        return (b.fuelLevelPercent ?? 0) - (a.fuelLevelPercent ?? 0);
+      case 'distance_desc':
+        return (b.dailyDistanceKm ?? 0) - (a.dailyDistanceKm ?? 0);
+      case 'last_seen_desc':
+        return new Date(b.latestPosition?.timestamp || 0).getTime() - new Date(a.latestPosition?.timestamp || 0).getTime();
+      case 'last_seen_asc':
+        return new Date(a.latestPosition?.timestamp || 0).getTime() - new Date(b.latestPosition?.timestamp || 0).getTime();
+      case 'speed_desc':
+        return (b.latestPosition?.speed ?? 0) - (a.latestPosition?.speed ?? 0);
+      case 'default':
+      default:
+        return a.licensePlate.localeCompare(b.licensePlate);
+    }
+  });
+
   // Update Vehicle Markers within Cluster Group or Regular Layer Group
   useEffect(() => {
     const map = mapInstanceRef.current;
@@ -278,41 +317,29 @@ export const LiveMap: React.FC<LiveMapProps> = ({
       const pos = veh.latestPosition;
       const isSelected = selectedVehicle?.id === veh.id;
 
-      let statusBg = 'bg-emerald-500';
-      let statusShadow = 'shadow-[0_0_12px_#10b981]';
-      let pulseClass = 'marker-pulse-active';
-
-      if (veh.status === 'idle') {
-        statusBg = 'bg-amber-500';
-        statusShadow = 'shadow-[0_0_12px_#f59e0b]';
-        pulseClass = '';
-      } else if (veh.status === 'stopped') {
-        statusBg = 'bg-zinc-600';
-        statusShadow = '';
-        pulseClass = '';
-      } else if (veh.status === 'offline') {
-        statusBg = 'bg-rose-500';
-        statusShadow = '';
-        pulseClass = '';
-      }
+      const markerHtml = buildLeafletVehicleMarkerHtml(
+        {
+          id: veh.id,
+          make: veh.make,
+          model: veh.model,
+          vehicleType: veh.vehicleType,
+          color: veh.color || '#0284c7',
+          licensePlate: veh.licensePlate,
+          status: veh.status,
+          latestPosition: {
+            speed: pos.speed,
+            heading: pos.heading,
+            ignition: pos.ignition
+          }
+        },
+        isSelected
+      );
 
       const customIcon = L.divIcon({
         className: 'artistic-vehicle-marker',
-        html: `
-          <div class="relative flex flex-col items-center cursor-pointer group transition-all ${isSelected ? 'scale-125 z-50' : 'scale-100'}">
-            <div class="w-10 h-10 rounded-2xl ${statusBg} ${statusShadow} border border-white/80 flex items-center justify-center text-white ${pulseClass} relative">
-              <svg style="transform: rotate(${pos.heading}deg)" class="w-5 h-5 text-white transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
-              </svg>
-            </div>
-            <div class="mt-1 bg-black/95 border border-zinc-800 px-2.5 py-0.5 rounded-full shadow-2xl text-[10px] font-bold text-white whitespace-nowrap tracking-wider flex items-center gap-1.5 font-mono">
-              <span>${veh.licensePlate}</span>
-              ${pos.speed > 0 ? `<span class="text-emerald-400 font-black">${pos.speed}k</span>` : ''}
-            </div>
-          </div>
-        `,
-        iconSize: [48, 64],
-        iconAnchor: [24, 32]
+        html: markerHtml,
+        iconSize: [52, 68],
+        iconAnchor: [26, 34]
       });
 
       const marker = L.marker([pos.latitude, pos.longitude], { icon: customIcon });
@@ -473,7 +500,7 @@ export const LiveMap: React.FC<LiveMapProps> = ({
       )}
 
       {/* 2. Interactive Live Map and Vehicle Directory Grid */}
-      <div className={`${isExpanded ? 'fixed inset-0 z-[200] bg-slate-950/90 backdrop-blur-md flex flex-col p-2 sm:p-4' : 'grid grid-cols-1 lg:grid-cols-12 gap-6'}`}>
+      <div className={`${isExpanded ? 'fixed inset-0 z-[200] bg-slate-900/60 dark:bg-slate-950/90 backdrop-blur-md flex flex-col p-2 sm:p-4' : 'grid grid-cols-1 lg:grid-cols-12 gap-6'}`}>
         
         {/* Vehicles Directory (Left Panel in standard, or floating drawer in expanded) */}
         {(!isExpanded || (isExpanded && showDrawerInExpanded)) && (
@@ -541,67 +568,125 @@ export const LiveMap: React.FC<LiveMapProps> = ({
                 </div>
               )}
 
-              {/* Search Input */}
-              <div className="relative">
-                <Search className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2" />
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Search plate, make, model..."
-                  className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-2xl pl-9 pr-3 py-2 text-xs text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-emerald-500 font-sans"
-                />
+              {/* Search & Sort Controls Row */}
+              <div className="space-y-2">
+                <div className="relative">
+                  <Search className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Search plate, make, model..."
+                    className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-2xl pl-9 pr-3 py-2 text-xs text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-emerald-500 font-sans"
+                  />
+                </div>
+
+                {/* Sort Selector Bar */}
+                <div className="flex items-center justify-between gap-1.5 bg-slate-100/80 dark:bg-zinc-950 p-1.5 rounded-xl border border-slate-200 dark:border-zinc-800">
+                  <div className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-400 pl-1">
+                    <SlidersHorizontal className="w-3 h-3 text-emerald-500" />
+                    <span>Sort:</span>
+                  </div>
+
+                  <div className="relative flex-1 max-w-[200px]">
+                    <select
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value as any)}
+                      className="w-full appearance-none bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 text-slate-800 dark:text-white rounded-lg px-2 py-1 text-[11px] font-semibold focus:outline-none focus:border-emerald-500 cursor-pointer pr-5"
+                    >
+                      <option value="default">Plate (A-Z)</option>
+                      <option value="battery_asc">⚡ Battery Level (Issues first)</option>
+                      <option value="battery_desc">⚡ Battery Level (Highest)</option>
+                      <option value="fuel_asc">⛽ Fuel Level (Lowest first)</option>
+                      <option value="fuel_desc">⛽ Fuel Level (Highest)</option>
+                      <option value="distance_desc">📍 Distance Today (Highest)</option>
+                      <option value="last_seen_desc">🕒 Last Seen (Most Recent)</option>
+                      <option value="last_seen_asc">⚠️ Last Seen (Oldest)</option>
+                      <option value="speed_desc">🚀 Speed (Highest First)</option>
+                    </select>
+                    <ArrowDownWideNarrow className="w-3 h-3 text-slate-400 dark:text-zinc-400 absolute right-1.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  </div>
+                </div>
               </div>
 
               {/* Scrollable Vehicle List */}
               <div className={`space-y-2 overflow-y-auto pr-1 flex-1 ${isExpanded ? 'max-h-[calc(100vh-320px)]' : 'max-h-[460px]'}`}>
-                {filteredVehicles.map((veh) => {
+                {sortedVehicles.map((veh) => {
                   const isSelected = selectedVehicle?.id === veh.id;
+                  const isLowBattery = (veh.latestPosition?.battery ?? 100) < 25;
+                  const isLowFuel = (veh.fuelLevelPercent ?? 100) < 20;
+
                   return (
                     <div
                       key={veh.id}
                       onClick={() => handleSelectVehicleItem(veh)}
-                      className={`p-3 rounded-2xl border cursor-pointer transition-all ${
+                      className={`p-3 rounded-2xl border cursor-pointer transition-all flex items-center gap-3 ${
                         isSelected
                           ? 'bg-emerald-50 border-emerald-300 dark:bg-zinc-900 dark:border-zinc-600 shadow-sm text-slate-900 dark:text-white'
                           : 'bg-slate-50/70 border-slate-200 hover:border-slate-300 dark:bg-zinc-950/60 dark:border-zinc-900 dark:hover:border-zinc-800 text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-200'
                       }`}
                     >
-                      <div className="flex justify-between items-start mb-1">
-                        <div className="flex items-center gap-2">
-                          <span className="font-mono font-bold text-xs bg-white dark:bg-zinc-900 text-slate-900 dark:text-white px-2 py-0.5 rounded-lg border border-slate-200 dark:border-zinc-800">
-                            {veh.licensePlate}
-                          </span>
-                          <span className="font-semibold text-xs text-slate-900 dark:text-white truncate max-w-[120px]">
-                            {veh.make} {veh.model}
-                          </span>
-                        </div>
-                        <span className="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 shrink-0">
-                          {veh.latestPosition.speed} km/h
-                        </span>
+                      {/* Vehicle Miniature Badge */}
+                      <div className="p-1 rounded-xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 shrink-0 shadow-xs">
+                        <VehicleMiniatureIcon
+                          vehicleType={veh.vehicleType}
+                          color={veh.color || '#0284c7'}
+                          make={veh.make}
+                          size={36}
+                          showBrandBadge={true}
+                        />
                       </div>
 
-                      <div className="flex justify-between items-center text-[11px] text-slate-500 dark:text-zinc-500 pt-1">
-                        <span className="truncate max-w-[150px]">{veh.fleetName}</span>
-                        <span
-                          className={`capitalize font-semibold text-[10px] px-1.5 py-0.5 rounded-md ${
-                            veh.status === 'moving'
-                              ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-400'
-                              : veh.status === 'idle'
-                              ? 'bg-amber-100 text-amber-800 dark:bg-amber-950/50 dark:text-amber-400'
-                              : veh.status === 'stopped'
-                              ? 'bg-slate-200 text-slate-700 dark:bg-zinc-800 dark:text-zinc-400'
-                              : 'bg-rose-100 text-rose-800 dark:bg-rose-950/50 dark:text-rose-400'
-                          }`}
-                        >
-                          {veh.status}
-                        </span>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex justify-between items-start mb-0.5">
+                          <div className="flex items-center gap-1.5 truncate">
+                            <span className="font-mono font-bold text-[11px] bg-white dark:bg-zinc-900 text-slate-900 dark:text-white px-1.5 py-0.5 rounded-md border border-slate-200 dark:border-zinc-800">
+                              {veh.licensePlate}
+                            </span>
+                            <span className="font-semibold text-xs text-slate-900 dark:text-white truncate">
+                              {veh.make} {veh.model}
+                            </span>
+                          </div>
+                          <span className="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 shrink-0 ml-1">
+                            {veh.latestPosition.speed} km/h
+                          </span>
+                        </div>
+
+                        {/* Telemetry info row */}
+                        <div className="flex items-center gap-2 text-[10px] font-mono text-slate-500 dark:text-zinc-400 py-0.5">
+                          <span className={`flex items-center gap-0.5 ${isLowBattery ? 'text-rose-500 font-bold' : ''}`}>
+                            <Battery className="w-2.5 h-2.5" />
+                            {veh.latestPosition.battery}%
+                          </span>
+                          <span className={`flex items-center gap-0.5 ${isLowFuel ? 'text-amber-500 font-bold' : ''}`}>
+                            <Fuel className="w-2.5 h-2.5" />
+                            {veh.fuelLevelPercent}%
+                          </span>
+                          <span className="truncate max-w-[90px]">{veh.fleetName}</span>
+                        </div>
+
+                        <div className="flex justify-between items-center text-[11px] text-slate-500 dark:text-zinc-500 pt-0.5">
+                          <span className="text-[10px]">Today: <strong>{(veh.dailyDistanceKm || 0).toFixed(0)} km</strong></span>
+                          <span
+                            className={`capitalize font-semibold text-[9px] px-1.5 py-0.2 rounded-md ${
+                              veh.status === 'moving'
+                                ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-400'
+                                : veh.status === 'idle'
+                                ? 'bg-amber-100 text-amber-800 dark:bg-amber-950/50 dark:text-amber-400'
+                                : veh.status === 'stopped'
+                                ? 'bg-slate-200 text-slate-700 dark:bg-zinc-800 dark:text-zinc-400'
+                                : 'bg-rose-100 text-rose-800 dark:bg-rose-950/50 dark:text-rose-400'
+                            }`}
+                          >
+                            {veh.status}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   );
                 })}
 
-                {filteredVehicles.length === 0 && (
+                {sortedVehicles.length === 0 && (
                   <div className="p-6 text-center text-xs text-slate-400 dark:text-zinc-500">
                     No vehicles found matching filter criteria.
                   </div>
@@ -626,7 +711,7 @@ export const LiveMap: React.FC<LiveMapProps> = ({
         <div
           className={`${
             isExpanded
-              ? 'relative w-full h-full rounded-[24px] sm:rounded-[32px] overflow-hidden border border-slate-700/80 dark:border-zinc-800 shadow-2xl bg-[#080808] flex-1'
+              ? 'relative w-full h-full rounded-[24px] sm:rounded-[32px] overflow-hidden border border-slate-200 dark:border-zinc-800 shadow-2xl bg-white dark:bg-[#080808] flex-1'
               : 'lg:col-span-8 flex flex-col gap-4'
           }`}
         >
@@ -634,7 +719,7 @@ export const LiveMap: React.FC<LiveMapProps> = ({
             className={`${
               isExpanded
                 ? 'relative w-full h-full'
-                : 'relative w-full h-[580px] rounded-[32px] overflow-hidden border border-slate-200 dark:border-zinc-800 shadow-xs dark:shadow-2xl bg-[#080808] isolate z-0'
+                : 'relative w-full h-[580px] rounded-[32px] overflow-hidden border border-slate-200 dark:border-zinc-800 shadow-xs dark:shadow-2xl bg-slate-100 dark:bg-[#080808] isolate z-0'
             }`}
           >
             {/* Map Canvas */}

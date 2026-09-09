@@ -20,6 +20,7 @@ export type PermissionKey =
   // Alerts & Incidents
   | 'alerts:view'
   | 'alerts:triage'
+  | 'alerts:manage'
   // Reports & Analytics
   | 'reports:view'
   | 'reports:create'
@@ -68,6 +69,7 @@ export const ALL_PERMISSIONS: PermissionDefinition[] = [
   // Alerts
   { key: 'alerts:view', category: 'alerts', label: 'View Safety Alerts', description: 'Monitor real-time overspeeding, power cut, and SOS alerts.' },
   { key: 'alerts:triage', category: 'alerts', label: 'Triage & Resolve Alerts', description: 'Acknowledge alerts, assign to dispatchers, and log resolution notes.' },
+  { key: 'alerts:manage', category: 'alerts', label: 'Configure Alert Rules', description: 'Define Traccar-style automated alert rules, vehicle bindings, thresholds, and notification channels.' },
 
   // Reports
   { key: 'reports:view', category: 'reports', label: 'View Reports', description: 'Review pre-computed mileage, fuel, and trip summary reports.' },
@@ -124,6 +126,7 @@ export const ROLE_DEFAULT_PERMISSIONS: Record<UserRole, PermissionKey[]> = {
     'geofences:manage',
     'alerts:view',
     'alerts:triage',
+    'alerts:manage',
     'reports:view',
     'reports:create',
     'reports:export_raw',
@@ -150,6 +153,7 @@ export const ROLE_DEFAULT_PERMISSIONS: Record<UserRole, PermissionKey[]> = {
     'geofences:manage',
     'alerts:view',
     'alerts:triage',
+    'alerts:manage',
     'reports:view',
     'reports:create',
     'modules:car_rental',
@@ -172,6 +176,7 @@ export const ROLE_DEFAULT_PERMISSIONS: Record<UserRole, PermissionKey[]> = {
     'geofences:manage',
     'alerts:view',
     'alerts:triage',
+    'alerts:manage',
     'reports:view',
     'reports:create',
     'modules:car_rental',

@@ -1,0 +1,112 @@
+services:
+  # ----------------------------------------------------------------------------
+  # 1. WEB & MOBILE APPLICATION (Frontend + Nginx)
+  # ----------------------------------------------------------------------------
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: flottemaestro_app
+    restart: unless-stopped
+    ports:
+      - "${PORT_HTTP:-80}:80"
+      - "${PORT_HTTPS:-443}:443"
+    environment:
+      - NODE_ENV=production
+      - VITE_API_URL=${API_URL:-http://localhost/api}
+      - VITE_WS_URL=${WS_URL:-ws://localhost/ws}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - flotte_network
+
+  # ----------------------------------------------------------------------------
+  # 2. POSTGRESQL + POSTGIS (Telemetry, Multi-tenant Data, Time-series)
+  # ----------------------------------------------------------------------------
+  postgres:
+    image: postgis/postgis:16-3.4-alpine
+    container_name: flottemaestro_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-flottemaestro}
+      POSTGRES_USER: ${DB_USER:-flotte_admin}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-flotte_secure_password_2026}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/database/init-schema.sql:/docker-entrypoint-initdb.d/01-init-schema.sql:ro
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-flotte_admin} -d ${DB_NAME:-flottemaestro}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - flotte_network
+
+  # ----------------------------------------------------------------------------
+  # 3. REDIS (Real-Time Pub/Sub, GPS Ingestion Buffer & Rate Limiting)
+  # ----------------------------------------------------------------------------
+  redis:
+    image: redis:7.2-alpine
+    container_name: flottemaestro_redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD:-redis_secure_password_2026}"]
+    volumes:
+      - redis_data:/data
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-redis_secure_password_2026}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - flotte_network
+
+  # ----------------------------------------------------------------------------
+  # 4. OPTIONAL: TRACCAR GPS PROTOCOL SERVER (Teltonika, Coban, Concox, Queclink)
+  # ----------------------------------------------------------------------------
+  traccar:
+    image: traccar/traccar:latest
+    container_name: flottemaestro_traccar
+    restart: unless-stopped
+    ports:
+      - "5001:5001"     # Teltonika (TCP/UDP)
+      - "5002:5002"     # Coban / GPS103 (TCP/UDP)
+      - "5023:5023"     # Concox / GT06 (TCP/UDP)
+      - "5004:5004"     # Queclink (TCP/UDP)
+      - "5013:5013"     # Suntech (TCP/UDP)
+      - "8082:8082"     # Traccar Web API / Management
+    environment:
+      - DATABASE_DRIVER=org.postgresql.Driver
+      - DATABASE_URL=jdbc:postgresql://postgres:5432/${DB_NAME:-flottemaestro}
+      - DATABASE_USER=${DB_USER:-flotte_admin}
+      - DATABASE_PASSWORD=${DB_PASSWORD:-flotte_secure_password_2026}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - flotte_network
+    profiles:
+      - full-telematics
+
+# ------------------------------------------------------------------------------
+# VOLUMES & PERSISTENCE
+# ------------------------------------------------------------------------------
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+# ------------------------------------------------------------------------------
+# ISOLATED DOCKER NETWORK
+# ------------------------------------------------------------------------------
+networks:
+  flotte_network:
+    driver: bridge

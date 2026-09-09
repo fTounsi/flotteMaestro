@@ -172,3 +172,18 @@ html.light .leaflet-popup-tip,
   background: transparent !important;
   border: none !important;
 }
+
+/* Light mode vehicle marker improvements */
+html.light .artistic-vehicle-marker .marker-card,
+[data-theme="light"] .artistic-vehicle-marker .marker-card {
+  background: rgba(255, 255, 255, 0.95) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.16) !important;
+}
+
+html.light .artistic-vehicle-marker .marker-tag,
+[data-theme="light"] .artistic-vehicle-marker .marker-tag {
+  background: rgba(255, 255, 255, 0.97) !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12) !important;
+}

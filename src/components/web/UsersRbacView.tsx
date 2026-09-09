@@ -360,15 +360,15 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
   return (
     <div className="space-y-6">
       {/* Top Banner Header */}
-      <div className="bg-zinc-900/40 rounded-[32px] p-6 border border-zinc-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-2xl">
+      <div className="bg-white dark:bg-zinc-900/40 rounded-[32px] p-6 border border-slate-200 dark:border-zinc-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-sm dark:shadow-2xl">
         <div className="border-l-2 border-emerald-500 pl-4 py-1">
-          <p className="text-[10px] uppercase tracking-widest text-zinc-500 mb-1 font-bold">
+          <p className="text-[10px] uppercase tracking-widest text-slate-500 dark:text-zinc-500 mb-1 font-bold">
             Access Governance & Enterprise Identity (RBAC)
           </p>
-          <h2 className="text-3xl font-black italic tracking-tight text-white">
+          <h2 className="text-3xl font-black italic tracking-tight text-slate-900 dark:text-white">
             {t.nav.usersRbac}
           </h2>
-          <p className="text-xs text-zinc-400 mt-1">
+          <p className="text-xs text-slate-600 dark:text-zinc-400 mt-1">
             Manage administrative privileges, granular capability matrices, multi-tenant accounts, and forensic audit trails.
           </p>
         </div>
@@ -377,7 +377,7 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
           {canManageUsers && (
             <button
               onClick={() => setIsAddModalOpen(true)}
-              className="px-5 py-2.5 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-black transition-all shadow-xl flex items-center gap-2"
+              className="px-5 py-2.5 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-black transition-all shadow-md flex items-center gap-2"
             >
               <Plus className="w-4 h-4" />
               <span>Invite New User</span>
@@ -387,7 +387,7 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
           {onSimulateRole && (
             <button
               onClick={() => onSimulateRole('viewer')}
-              className="px-4 py-2.5 rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-amber-400 border border-amber-500/30 text-xs font-bold transition-all flex items-center gap-2"
+              className="px-4 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 text-amber-600 dark:text-amber-400 border border-amber-500/30 text-xs font-bold transition-all flex items-center gap-2"
             >
               <Eye className="w-4 h-4" />
               <span>Test as Viewer</span>
@@ -398,58 +398,58 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
 
       {/* Metric Cards Summary */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-zinc-900/40 p-5 rounded-[24px] border border-zinc-800">
-          <div className="flex justify-between items-center text-zinc-400 mb-2">
+        <div className="bg-white dark:bg-zinc-900/40 p-5 rounded-[24px] border border-slate-200 dark:border-zinc-800 shadow-xs">
+          <div className="flex justify-between items-center text-slate-500 dark:text-zinc-400 mb-2">
             <span className="text-[10px] uppercase font-bold tracking-wider">Total Members</span>
-            <Users className="w-4 h-4 text-emerald-400" />
+            <Users className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
           </div>
-          <div className="text-3xl font-black text-white">{users.length}</div>
-          <div className="text-[11px] text-zinc-500 mt-1">
+          <div className="text-3xl font-black text-slate-900 dark:text-white">{users.length}</div>
+          <div className="text-[11px] text-slate-500 dark:text-zinc-500 mt-1">
             Across {organizations.length} active organizations
           </div>
         </div>
 
-        <div className="bg-zinc-900/40 p-5 rounded-[24px] border border-zinc-800">
-          <div className="flex justify-between items-center text-zinc-400 mb-2">
+        <div className="bg-white dark:bg-zinc-900/40 p-5 rounded-[24px] border border-slate-200 dark:border-zinc-800 shadow-xs">
+          <div className="flex justify-between items-center text-slate-500 dark:text-zinc-400 mb-2">
             <span className="text-[10px] uppercase font-bold tracking-wider">Active Accounts</span>
-            <CheckCircle className="w-4 h-4 text-emerald-400" />
+            <CheckCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
           </div>
-          <div className="text-3xl font-black text-emerald-400">
+          <div className="text-3xl font-black text-emerald-600 dark:text-emerald-400">
             {users.filter((u) => u.status === 'active').length}
           </div>
-          <div className="text-[11px] text-zinc-500 mt-1">Ready for real-time dispatch</div>
+          <div className="text-[11px] text-slate-500 dark:text-zinc-500 mt-1">Ready for real-time dispatch</div>
         </div>
 
-        <div className="bg-zinc-900/40 p-5 rounded-[24px] border border-zinc-800">
-          <div className="flex justify-between items-center text-zinc-400 mb-2">
+        <div className="bg-white dark:bg-zinc-900/40 p-5 rounded-[24px] border border-slate-200 dark:border-zinc-800 shadow-xs">
+          <div className="flex justify-between items-center text-slate-500 dark:text-zinc-400 mb-2">
             <span className="text-[10px] uppercase font-bold tracking-wider">2FA Protected</span>
-            <ShieldCheck className="w-4 h-4 text-purple-400" />
+            <ShieldCheck className="w-4 h-4 text-purple-600 dark:text-purple-400" />
           </div>
-          <div className="text-3xl font-black text-white">
+          <div className="text-3xl font-black text-slate-900 dark:text-white">
             {users.filter((u) => u.twoFactorEnabled).length}
           </div>
-          <div className="text-[11px] text-zinc-500 mt-1">MFA TOTP Authenticator active</div>
+          <div className="text-[11px] text-slate-500 dark:text-zinc-500 mt-1">MFA TOTP Authenticator active</div>
         </div>
 
-        <div className="bg-zinc-900/40 p-5 rounded-[24px] border border-zinc-800">
-          <div className="flex justify-between items-center text-zinc-400 mb-2">
+        <div className="bg-white dark:bg-zinc-900/40 p-5 rounded-[24px] border border-slate-200 dark:border-zinc-800 shadow-xs">
+          <div className="flex justify-between items-center text-slate-500 dark:text-zinc-400 mb-2">
             <span className="text-[10px] uppercase font-bold tracking-wider">Audit Trail Records</span>
-            <Clock className="w-4 h-4 text-cyan-400" />
+            <Clock className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
           </div>
-          <div className="text-3xl font-black text-cyan-400">{auditLogs.length}</div>
-          <div className="text-[11px] text-zinc-500 mt-1">Cryptographically stamped events</div>
+          <div className="text-3xl font-black text-cyan-600 dark:text-cyan-400">{auditLogs.length}</div>
+          <div className="text-[11px] text-slate-500 dark:text-zinc-500 mt-1">Cryptographically stamped events</div>
         </div>
       </div>
 
       {/* Main Tab Controller */}
-      <div className="bg-zinc-900/40 border border-zinc-800 rounded-[32px] overflow-hidden shadow-2xl">
-        <div className="flex border-b border-zinc-800 px-6 pt-4 gap-6 bg-zinc-950/40 overflow-x-auto">
+      <div className="bg-white dark:bg-zinc-900/40 border border-slate-200 dark:border-zinc-800 rounded-[32px] overflow-hidden shadow-sm dark:shadow-2xl">
+        <div className="flex border-b border-slate-200 dark:border-zinc-800 px-6 pt-4 gap-6 bg-slate-50 dark:bg-zinc-950/40 overflow-x-auto">
           <button
             onClick={() => setActiveTab('directory')}
             className={`pb-4 text-xs font-black uppercase tracking-wider flex items-center gap-2 border-b-2 transition-all whitespace-nowrap ${
               activeTab === 'directory'
-                ? 'border-emerald-400 text-emerald-400'
-                : 'border-transparent text-zinc-500 hover:text-zinc-300'
+                ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400'
+                : 'border-transparent text-slate-500 hover:text-slate-800 dark:text-zinc-500 dark:hover:text-zinc-300'
             }`}
           >
             <Users className="w-4 h-4" />
@@ -460,8 +460,8 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
             onClick={() => setActiveTab('matrix')}
             className={`pb-4 text-xs font-black uppercase tracking-wider flex items-center gap-2 border-b-2 transition-all whitespace-nowrap ${
               activeTab === 'matrix'
-                ? 'border-emerald-400 text-emerald-400'
-                : 'border-transparent text-zinc-500 hover:text-zinc-300'
+                ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400'
+                : 'border-transparent text-slate-500 hover:text-slate-800 dark:text-zinc-500 dark:hover:text-zinc-300'
             }`}
           >
             <Shield className="w-4 h-4" />
@@ -472,8 +472,8 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
             onClick={() => setActiveTab('overrides')}
             className={`pb-4 text-xs font-black uppercase tracking-wider flex items-center gap-2 border-b-2 transition-all whitespace-nowrap ${
               activeTab === 'overrides'
-                ? 'border-emerald-400 text-emerald-400'
-                : 'border-transparent text-zinc-500 hover:text-zinc-300'
+                ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400'
+                : 'border-transparent text-slate-500 hover:text-slate-800 dark:text-zinc-500 dark:hover:text-zinc-300'
             }`}
           >
             <Sliders className="w-4 h-4" />
@@ -484,8 +484,8 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
             onClick={() => setActiveTab('audit')}
             className={`pb-4 text-xs font-black uppercase tracking-wider flex items-center gap-2 border-b-2 transition-all whitespace-nowrap ${
               activeTab === 'audit'
-                ? 'border-emerald-400 text-emerald-400'
-                : 'border-transparent text-zinc-500 hover:text-zinc-300'
+                ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400'
+                : 'border-transparent text-slate-500 hover:text-slate-800 dark:text-zinc-500 dark:hover:text-zinc-300'
             }`}
           >
             <Terminal className="w-4 h-4" />
@@ -499,13 +499,13 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
             {/* Filter and Search Ribbon */}
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="relative flex-1 min-w-[240px] max-w-sm">
-                <Search className="w-3.5 h-3.5 text-zinc-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <Search className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Search by name, email, phone..."
-                  className="w-full bg-zinc-950 border border-zinc-800 rounded-2xl pl-9 pr-3.5 py-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-600"
+                  className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-2xl pl-9 pr-3.5 py-2.5 text-xs text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-emerald-500 dark:focus:border-zinc-600"
                 />
               </div>
 
@@ -514,7 +514,7 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
                 <select
                   value={filterRole}
                   onChange={(e) => setFilterRole(e.target.value)}
-                  className="bg-zinc-950 border border-zinc-800 rounded-2xl px-3 py-2 text-xs text-zinc-300 focus:outline-none focus:border-zinc-700"
+                  className="bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-2xl px-3 py-2 text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-emerald-500 dark:focus:border-zinc-700"
                 >
                   <option value="all">All Roles</option>
                   <option value="super_admin">Super Admin</option>
@@ -526,12 +526,12 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
                   <option value="viewer">Read-Only Viewer</option>
                 </select>
 
-                {/* Organization Filter (Super Admin can filter any org, regular user is scoped to own org) */}
+                {/* Organization Filter */}
                 {isSuperAdmin ? (
                   <select
                     value={filterOrg}
                     onChange={(e) => setFilterOrg(e.target.value)}
-                    className="bg-zinc-950 border border-zinc-800 rounded-2xl px-3 py-2 text-xs text-zinc-300 focus:outline-none focus:border-zinc-700"
+                    className="bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-2xl px-3 py-2 text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-emerald-500 dark:focus:border-zinc-700"
                   >
                     <option value="all">All Organizations ({organizations.length})</option>
                     {organizations.map((o) => (
@@ -541,7 +541,7 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
                     ))}
                   </select>
                 ) : (
-                  <div className="bg-zinc-950 border border-zinc-800 rounded-2xl px-3 py-2 text-xs text-emerald-400 font-semibold flex items-center gap-1.5">
+                  <div className="bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-2xl px-3 py-2 text-xs text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1.5">
                     <Building2 className="w-3 h-3" />
                     <span>{currentUser?.organizationName || 'My Organization'}</span>
                   </div>
@@ -551,7 +551,7 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
                 <select
                   value={filterStatus}
                   onChange={(e) => setFilterStatus(e.target.value)}
-                  className="bg-zinc-950 border border-zinc-800 rounded-2xl px-3 py-2 text-xs text-zinc-300 focus:outline-none focus:border-zinc-700"
+                  className="bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-2xl px-3 py-2 text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-emerald-500 dark:focus:border-zinc-700"
                 >
                   <option value="all">All Statuses</option>
                   <option value="active">Active Only</option>
@@ -599,8 +599,8 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
                       key={usr.id}
                       className={`p-5 rounded-[24px] border transition-all flex flex-col justify-between ${
                         usr.status === 'active'
-                          ? 'bg-zinc-950 border-zinc-800/80 hover:border-zinc-700'
-                          : 'bg-zinc-950/40 border-zinc-900 opacity-60'
+                          ? 'bg-white dark:bg-zinc-950 border-slate-200 dark:border-zinc-800/80 hover:border-slate-300 dark:hover:border-zinc-700 shadow-xs'
+                          : 'bg-slate-50 dark:bg-zinc-950/40 border-slate-200 dark:border-zinc-900 opacity-60'
                       }`}
                     >
                       <div>
@@ -613,18 +613,18 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
                               }
                               alt={usr.name}
                               referrerPolicy="no-referrer"
-                              className="w-12 h-12 rounded-2xl bg-zinc-900 border border-zinc-800 object-cover"
+                              className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 object-cover"
                             />
                             <div>
                               <div className="flex items-center gap-1.5">
-                                <h4 className="text-sm font-black text-white">{usr.name}</h4>
+                                <h4 className="text-sm font-black text-slate-900 dark:text-white">{usr.name}</h4>
                                 {isCurrent && (
-                                  <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                                  <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
                                     YOU
                                   </span>
                                 )}
                               </div>
-                              <p className="text-xs text-zinc-400">{usr.email}</p>
+                              <p className="text-xs text-slate-500 dark:text-zinc-400">{usr.email}</p>
                             </div>
                           </div>
 
@@ -636,33 +636,33 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
                         </div>
 
                         {/* Details Metadata */}
-                        <div className="mt-4 pt-3 border-t border-zinc-800/80 space-y-1.5 text-xs text-zinc-400">
+                        <div className="mt-4 pt-3 border-t border-slate-100 dark:border-zinc-800/80 space-y-1.5 text-xs text-slate-600 dark:text-zinc-400">
                           <div className="flex justify-between items-center">
-                            <span className="text-zinc-500 text-[11px]">Organization:</span>
-                            <span className="font-semibold text-zinc-300 text-right truncate max-w-[180px]">
+                            <span className="text-slate-400 dark:text-zinc-500 text-[11px]">Organization:</span>
+                            <span className="font-semibold text-slate-800 dark:text-zinc-300 text-right truncate max-w-[180px]">
                               {usr.organizationName}
                             </span>
                           </div>
 
                           <div className="flex justify-between items-center">
-                            <span className="text-zinc-500 text-[11px]">Contact Phone:</span>
-                            <span className="font-mono text-zinc-300">{usr.phone || '—'}</span>
+                            <span className="text-slate-400 dark:text-zinc-500 text-[11px]">Contact Phone:</span>
+                            <span className="font-mono text-slate-800 dark:text-zinc-300">{usr.phone || '—'}</span>
                           </div>
 
                           <div className="flex justify-between items-center">
-                            <span className="text-zinc-500 text-[11px]">Security PIN:</span>
-                            <span className="font-mono font-bold px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-emerald-400">
+                            <span className="text-slate-400 dark:text-zinc-500 text-[11px]">Security PIN:</span>
+                            <span className="font-mono font-bold px-2 py-0.5 rounded bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-emerald-600 dark:text-emerald-400">
                               {usr.demoPin || '1234'}
                             </span>
                           </div>
 
                           <div className="flex justify-between items-center">
-                            <span className="text-zinc-500 text-[11px]">Two-Factor (2FA):</span>
+                            <span className="text-slate-400 dark:text-zinc-500 text-[11px]">Two-Factor (2FA):</span>
                             <span
                               className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-md ${
                                 usr.twoFactorEnabled
-                                  ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30'
-                                  : 'bg-zinc-900 text-zinc-500 border border-zinc-800'
+                                  ? 'bg-purple-500/10 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 border border-purple-500/30'
+                                  : 'bg-slate-100 dark:bg-zinc-900 text-slate-500 dark:text-zinc-500 border border-slate-200 dark:border-zinc-800'
                               }`}
                             >
                               {usr.twoFactorEnabled ? 'TOTP Active' : 'Disabled'}
@@ -671,8 +671,8 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
 
                           {hasCustomOverrides && (
                             <div className="flex justify-between items-center pt-1">
-                              <span className="text-amber-500 text-[11px] font-bold">Custom RBAC:</span>
-                              <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/30 text-amber-400">
+                              <span className="text-amber-600 dark:text-amber-500 text-[11px] font-bold">Custom RBAC:</span>
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-400">
                                 {usr.customPermissions?.length} Overrides
                               </span>
                             </div>
@@ -681,13 +681,13 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
                       </div>
 
                       {/* Action Toolbar */}
-                      <div className="mt-4 pt-3 border-t border-zinc-800/80 flex items-center justify-between gap-2">
+                      <div className="mt-4 pt-3 border-t border-slate-100 dark:border-zinc-800/80 flex items-center justify-between gap-2">
                         <div className="flex items-center gap-1.5">
                           {canManageUsers && (
                             <button
                               onClick={() => setEditingUser(usr)}
                               title="Edit User Credentials"
-                              className="p-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white border border-zinc-800"
+                              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 text-slate-600 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-white border border-slate-200 dark:border-zinc-800"
                             >
                               <Edit2 className="w-3.5 h-3.5" />
                             </button>
@@ -697,7 +697,7 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
                             <button
                               onClick={() => handleResetPin(usr)}
                               title="Generate New Security PIN"
-                              className="p-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-amber-400 border border-zinc-800"
+                              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 text-slate-600 hover:text-amber-600 dark:text-zinc-400 dark:hover:text-amber-400 border border-slate-200 dark:border-zinc-800"
                             >
                               <Key className="w-3.5 h-3.5" />
                             </button>
@@ -710,7 +710,7 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
                                 setActiveTab('overrides');
                               }}
                               title="Configure Granular Capability Overrides"
-                              className="p-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-emerald-400 border border-zinc-800"
+                              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 text-slate-600 hover:text-emerald-600 dark:text-zinc-400 dark:hover:text-emerald-400 border border-slate-200 dark:border-zinc-800"
                             >
                               <Sliders className="w-3.5 h-3.5" />
                             </button>
@@ -724,8 +724,8 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
                               title={usr.status === 'active' ? 'Suspend Account' : 'Reactivate Account'}
                               className={`px-2.5 py-1.5 rounded-xl border text-[10px] font-bold uppercase transition-all ${
                                 usr.status === 'active'
-                                  ? 'bg-zinc-900 hover:bg-red-500/10 border-zinc-800 hover:border-red-500/40 text-zinc-400 hover:text-red-400'
-                                  : 'bg-emerald-500/10 border-emerald-500/40 text-emerald-400'
+                                  ? 'bg-slate-100 hover:bg-red-50 dark:bg-zinc-900 dark:hover:bg-red-500/10 border-slate-200 hover:border-red-300 dark:border-zinc-800 dark:hover:border-red-500/40 text-slate-600 hover:text-red-600 dark:text-zinc-400 dark:hover:text-red-400'
+                                  : 'bg-emerald-500/10 border-emerald-500/40 text-emerald-600 dark:text-emerald-400'
                               }`}
                             >
                               {usr.status === 'active' ? 'Suspend' : 'Activate'}
@@ -736,7 +736,7 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
                             <button
                               onClick={() => setUserToDelete(usr)}
                               title="Permanently Delete User"
-                              className="p-2 rounded-xl bg-zinc-900 hover:bg-red-500/20 text-zinc-500 hover:text-red-400 border border-zinc-800"
+                              className="p-2 rounded-xl bg-slate-100 hover:bg-red-50 dark:bg-zinc-900 dark:hover:bg-red-500/20 text-slate-400 hover:text-red-600 dark:text-zinc-500 dark:hover:text-red-400 border border-slate-200 dark:border-zinc-800"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>
@@ -754,10 +754,10 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
         {/* 2. RBAC MATRIX TAB */}
         {activeTab === 'matrix' && (
           <div className="p-6 space-y-6">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-zinc-950 p-4 rounded-2xl border border-zinc-800">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50 dark:bg-zinc-950 p-4 rounded-2xl border border-slate-200 dark:border-zinc-800">
               <div>
-                <h4 className="text-sm font-bold text-white">Default Role Capabilities</h4>
-                <p className="text-xs text-zinc-400 mt-0.5">
+                <h4 className="text-sm font-bold text-slate-900 dark:text-white">Default Role Capabilities</h4>
+                <p className="text-xs text-slate-600 dark:text-zinc-400 mt-0.5">
                   Toggle permissions for built-in system roles. Changes immediately affect all users assigned to that role without custom overrides.
                 </p>
               </div>
@@ -765,7 +765,7 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
               {canEditRbac && (
                 <button
                   onClick={() => setRoleMatrix(ROLE_DEFAULT_PERMISSIONS)}
-                  className="px-3.5 py-1.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white border border-zinc-700 text-xs font-bold"
+                  className="px-3.5 py-1.5 rounded-xl bg-white hover:bg-slate-100 dark:bg-zinc-900 dark:hover:bg-zinc-800 text-slate-700 hover:text-slate-900 dark:text-zinc-300 dark:hover:text-white border border-slate-300 dark:border-zinc-700 text-xs font-bold shadow-xs"
                 >
                   Reset Defaults
                 </button>
@@ -773,31 +773,31 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
             </div>
 
             {/* Matrix Table */}
-            <div className="overflow-x-auto border border-zinc-800 rounded-2xl">
+            <div className="overflow-x-auto border border-slate-200 dark:border-zinc-800 rounded-2xl bg-white dark:bg-zinc-950">
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
-                  <tr className="bg-zinc-950 border-b border-zinc-800 text-zinc-400">
+                  <tr className="bg-slate-100 dark:bg-zinc-950 border-b border-slate-200 dark:border-zinc-800 text-slate-700 dark:text-zinc-400">
                     <th className="p-4 font-bold uppercase tracking-wider text-[11px] min-w-[260px]">
                       Capability / Permission
                     </th>
-                    <th className="p-3 font-bold text-center text-purple-400 min-w-[100px]">Super Admin</th>
-                    <th className="p-3 font-bold text-center text-cyan-400 min-w-[100px]">Support Admin</th>
-                    <th className="p-3 font-bold text-center text-emerald-400 min-w-[100px]">Org Owner</th>
-                    <th className="p-3 font-bold text-center text-blue-400 min-w-[100px]">Org Admin</th>
-                    <th className="p-3 font-bold text-center text-amber-400 min-w-[100px]">Dispatcher</th>
-                    <th className="p-3 font-bold text-center text-teal-400 min-w-[100px]">Driver</th>
-                    <th className="p-3 font-bold text-center text-zinc-400 min-w-[100px]">Viewer</th>
+                    <th className="p-3 font-bold text-center text-purple-700 dark:text-purple-400 min-w-[100px]">Super Admin</th>
+                    <th className="p-3 font-bold text-center text-cyan-700 dark:text-cyan-400 min-w-[100px]">Support Admin</th>
+                    <th className="p-3 font-bold text-center text-emerald-700 dark:text-emerald-400 min-w-[100px]">Org Owner</th>
+                    <th className="p-3 font-bold text-center text-blue-700 dark:text-blue-400 min-w-[100px]">Org Admin</th>
+                    <th className="p-3 font-bold text-center text-amber-700 dark:text-amber-400 min-w-[100px]">Dispatcher</th>
+                    <th className="p-3 font-bold text-center text-teal-700 dark:text-teal-400 min-w-[100px]">Driver</th>
+                    <th className="p-3 font-bold text-center text-slate-600 dark:text-zinc-400 min-w-[100px]">Viewer</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-zinc-800/80 bg-zinc-950/40">
+                <tbody className="divide-y divide-slate-100 dark:divide-zinc-800/80 bg-white dark:bg-zinc-950/40">
                   {ALL_PERMISSIONS.map((perm) => (
-                    <tr key={perm.key} className="hover:bg-zinc-900/30 transition-colors">
+                    <tr key={perm.key} className="hover:bg-slate-50 dark:hover:bg-zinc-900/30 transition-colors">
                       <td className="p-4">
-                        <div className="font-bold text-white">{perm.label}</div>
-                        <div className="text-[11px] text-zinc-500 leading-tight mt-0.5">
+                        <div className="font-bold text-slate-900 dark:text-white">{perm.label}</div>
+                        <div className="text-[11px] text-slate-500 dark:text-zinc-500 leading-tight mt-0.5">
                           {perm.description}
                         </div>
-                        <span className="inline-block mt-1 font-mono text-[9px] px-2 py-0.5 rounded bg-zinc-900 text-zinc-400 border border-zinc-800">
+                        <span className="inline-block mt-1 font-mono text-[9px] px-2 py-0.5 rounded bg-slate-100 dark:bg-zinc-900 text-slate-600 dark:text-zinc-400 border border-slate-200 dark:border-zinc-800">
                           {perm.key}
                         </span>
                       </td>
@@ -816,8 +816,8 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
                               onClick={() => handleToggleRolePermission(role, perm.key)}
                               className={`w-7 h-7 rounded-lg inline-flex items-center justify-center transition-all ${
                                 isGranted
-                                  ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/50'
-                                  : 'bg-zinc-900/80 text-zinc-600 border border-zinc-800'
+                                  ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/50'
+                                  : 'bg-slate-100 dark:bg-zinc-900/80 text-slate-400 dark:text-zinc-600 border border-slate-200 dark:border-zinc-800'
                               } ${
                                 !canEditRbac || role === 'super_admin' ? 'cursor-default' : 'hover:scale-110'
                               }`}
@@ -838,15 +838,15 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
         {/* 3. USER OVERRIDES TAB */}
         {activeTab === 'overrides' && (
           <div className="p-6 space-y-6">
-            <div className="bg-zinc-950 p-5 rounded-2xl border border-zinc-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div className="bg-slate-50 dark:bg-zinc-950 p-5 rounded-2xl border border-slate-200 dark:border-zinc-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
               <div>
-                <label className="text-[10px] uppercase font-bold tracking-wider text-zinc-500 block mb-1.5">
+                <label className="text-[10px] uppercase font-bold tracking-wider text-slate-500 dark:text-zinc-500 block mb-1.5">
                   Select User Account to Customize
                 </label>
                 <select
                   value={selectedOverrideUserId}
                   onChange={(e) => setSelectedOverrideUserId(e.target.value)}
-                  className="bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-xs text-white font-bold focus:outline-none focus:border-emerald-500 min-w-[280px]"
+                  className="bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-700 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white font-bold focus:outline-none focus:border-emerald-500 min-w-[280px]"
                 >
                   {users.map((u) => (
                     <option key={u.id} value={u.id}>
@@ -861,14 +861,14 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
                   {selectedOverrideUser.customPermissions && (
                     <button
                       onClick={handleResetUserOverride}
-                      className="px-3.5 py-1.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white text-xs font-bold border border-zinc-700"
+                      className="px-3.5 py-1.5 rounded-xl bg-white hover:bg-slate-100 dark:bg-zinc-900 dark:hover:bg-zinc-800 text-slate-700 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-white text-xs font-bold border border-slate-300 dark:border-zinc-700 shadow-xs"
                     >
                       Clear Overrides (Revert to Role)
                     </button>
                   )}
-                  <span className="text-xs text-zinc-400">
+                  <span className="text-xs text-slate-600 dark:text-zinc-400">
                     Baseline Role:{' '}
-                    <span className="font-bold text-white">
+                    <span className="font-bold text-slate-900 dark:text-white">
                       {ROLE_METADATA[selectedOverrideUser.role]?.label}
                     </span>
                   </span>
@@ -892,23 +892,23 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
                       onClick={() => handleToggleUserOverride(perm.key)}
                       className={`p-4 rounded-2xl border cursor-pointer transition-all flex items-start justify-between gap-3 ${
                         effectiveGranted
-                          ? 'bg-zinc-950 border-emerald-500/40 hover:border-emerald-500'
-                          : 'bg-zinc-950/40 border-zinc-800/80 hover:border-zinc-700 opacity-60'
+                          ? 'bg-white dark:bg-zinc-950 border-emerald-500/40 hover:border-emerald-500 shadow-xs'
+                          : 'bg-slate-50 dark:bg-zinc-950/40 border-slate-200 dark:border-zinc-800/80 hover:border-slate-300 dark:hover:border-zinc-700 opacity-60'
                       }`}
                     >
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="text-xs font-bold text-white">{perm.label}</span>
+                          <span className="text-xs font-bold text-slate-900 dark:text-white">{perm.label}</span>
                           {isCustom && (
-                            <span className="text-[9px] font-bold uppercase px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-400 border border-amber-500/40">
+                            <span className="text-[9px] font-bold uppercase px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-700 dark:text-amber-400 border border-amber-500/40">
                               Override
                             </span>
                           )}
                         </div>
-                        <p className="text-[11px] text-zinc-400 mt-1 leading-relaxed">
+                        <p className="text-[11px] text-slate-500 dark:text-zinc-400 mt-1 leading-relaxed">
                           {perm.description}
                         </p>
-                        <span className="font-mono text-[9px] text-zinc-500 block mt-2">
+                        <span className="font-mono text-[9px] text-slate-400 dark:text-zinc-500 block mt-2">
                           {perm.key}
                         </span>
                       </div>
@@ -917,7 +917,7 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
                         className={`w-6 h-6 rounded-lg flex items-center justify-center shrink-0 mt-0.5 border ${
                           effectiveGranted
                             ? 'bg-emerald-500 text-black border-emerald-400'
-                            : 'bg-zinc-900 text-zinc-600 border-zinc-800'
+                            : 'bg-slate-100 dark:bg-zinc-900 text-slate-400 dark:text-zinc-600 border-slate-300 dark:border-zinc-800'
                         }`}
                       >
                         {effectiveGranted ? <Check className="w-3.5 h-3.5 stroke-[3]" /> : <X className="w-3.5 h-3.5" />}
@@ -935,13 +935,13 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
           <div className="p-6 space-y-5">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="relative flex-1 min-w-[240px] max-w-sm">
-                <Search className="w-3.5 h-3.5 text-zinc-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <Search className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
                   value={auditSearch}
                   onChange={(e) => setAuditSearch(e.target.value)}
                   placeholder="Search audit actions, user, details..."
-                  className="w-full bg-zinc-950 border border-zinc-800 rounded-2xl pl-9 pr-3.5 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-600"
+                  className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-2xl pl-9 pr-3.5 py-2 text-xs text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-emerald-500 dark:focus:border-zinc-600"
                 />
               </div>
 
@@ -949,7 +949,7 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
                 <select
                   value={auditCategory}
                   onChange={(e) => setAuditCategory(e.target.value)}
-                  className="bg-zinc-950 border border-zinc-800 rounded-2xl px-3 py-2 text-xs text-zinc-300 focus:outline-none focus:border-zinc-700"
+                  className="bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-2xl px-3 py-2 text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:border-emerald-500 dark:focus:border-zinc-700"
                 >
                   <option value="all">All Categories</option>
                   <option value="rbac">RBAC & Permissions</option>
@@ -961,7 +961,7 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
 
                 <button
                   onClick={handleExportAuditCsv}
-                  className="px-4 py-2 rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-800 text-xs font-bold flex items-center gap-2 transition-all shadow-md"
+                  className="px-4 py-2 rounded-2xl bg-white hover:bg-slate-100 dark:bg-zinc-900 dark:hover:bg-zinc-800 text-slate-700 hover:text-slate-900 dark:text-zinc-200 border border-slate-200 dark:border-zinc-800 text-xs font-bold flex items-center gap-2 transition-all shadow-xs"
                 >
                   <Download className="w-3.5 h-3.5" />
                   <span>Export CSV</span>
@@ -972,42 +972,42 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
             {/* Audit Log Stream */}
             <div className="space-y-2.5">
               {filteredAuditLogs.length === 0 ? (
-                <div className="text-center py-16 text-zinc-500 text-xs">
+                <div className="text-center py-16 text-slate-500 dark:text-zinc-500 text-xs">
                   No forensic audit logs found.
                 </div>
               ) : (
                 filteredAuditLogs.map((log) => (
                   <div
                     key={log.id}
-                    className="p-4 rounded-[20px] bg-zinc-950 border border-zinc-800/80 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-xs"
+                    className="p-4 rounded-[20px] bg-white dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800/80 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-xs shadow-xs"
                   >
                     <div className="flex items-start gap-3">
                       <div
                         className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 mt-0.5 border ${
                           log.severity === 'danger'
-                            ? 'bg-red-500/10 border-red-500/40 text-red-400'
+                            ? 'bg-red-500/10 border-red-500/40 text-red-600 dark:text-red-400'
                             : log.severity === 'warning'
-                            ? 'bg-amber-500/10 border-amber-500/40 text-amber-400'
-                            : 'bg-zinc-900 border-zinc-800 text-emerald-400'
+                            ? 'bg-amber-500/10 border-amber-500/40 text-amber-600 dark:text-amber-400'
+                            : 'bg-emerald-500/10 border-emerald-500/40 text-emerald-600 dark:text-emerald-400'
                         }`}
                       >
                         <Shield className="w-4 h-4" />
                       </div>
                       <div>
                         <div className="flex flex-wrap items-center gap-2">
-                          <span className="font-mono font-bold text-[10px] px-2 py-0.5 rounded bg-zinc-900 text-white border border-zinc-800">
+                          <span className="font-mono font-bold text-[10px] px-2 py-0.5 rounded bg-slate-100 dark:bg-zinc-900 text-slate-800 dark:text-white border border-slate-200 dark:border-zinc-800">
                             {log.action}
                           </span>
-                          <span className="font-bold text-white">{log.userName}</span>
-                          <span className="text-[10px] text-zinc-500">({log.userRole})</span>
+                          <span className="font-bold text-slate-900 dark:text-white">{log.userName}</span>
+                          <span className="text-[10px] text-slate-500 dark:text-zinc-500">({log.userRole})</span>
                         </div>
-                        <p className="text-zinc-300 mt-1 leading-relaxed">{log.description}</p>
+                        <p className="text-slate-600 dark:text-zinc-300 mt-1 leading-relaxed">{log.description}</p>
                       </div>
                     </div>
 
-                    <div className="flex flex-col md:items-end text-[11px] text-zinc-500 font-mono shrink-0">
+                    <div className="flex flex-col md:items-end text-[11px] text-slate-500 dark:text-zinc-500 font-mono shrink-0">
                       <span>{new Date(log.timestamp).toLocaleString()}</span>
-                      <span className="text-[10px] text-zinc-600">IP: {log.ipAddress}</span>
+                      <span className="text-[10px] text-slate-400 dark:text-zinc-600">IP: {log.ipAddress}</span>
                     </div>
                   </div>
                 ))
@@ -1019,18 +1019,18 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
 
       {/* MODAL 1: ADD NEW USER */}
       {isAddModalOpen && (
-        <div className="fixed inset-0 z-[1100] bg-black/85 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-[#09090b] border border-zinc-800 rounded-[32px] w-full max-w-lg shadow-2xl p-6 sm:p-8 text-white animate-in zoom-in-95 duration-150">
-            <div className="flex justify-between items-center border-b border-zinc-800 pb-4 mb-5">
+        <div className="fixed inset-0 z-[1100] bg-slate-900/60 dark:bg-black/85 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white dark:bg-[#09090b] border border-slate-200 dark:border-zinc-800 rounded-[32px] w-full max-w-3xl shadow-2xl p-6 sm:p-8 text-slate-900 dark:text-white animate-in zoom-in-95 duration-150">
+            <div className="flex justify-between items-center border-b border-slate-200 dark:border-zinc-800 pb-4 mb-5">
               <div>
-                <h3 className="text-lg font-black text-white">Register New Fleet Member</h3>
-                <p className="text-xs text-zinc-400">
+                <h3 className="text-lg font-black text-slate-900 dark:text-white">Register New Fleet Member</h3>
+                <p className="text-xs text-slate-500 dark:text-zinc-400">
                   Provision new credentials and assign initial role privileges.
                 </p>
               </div>
               <button
                 onClick={() => setIsAddModalOpen(false)}
-                className="p-2 rounded-xl bg-zinc-900 text-zinc-400 hover:text-white border border-zinc-800"
+                className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-zinc-900 text-slate-500 hover:text-slate-800 dark:text-zinc-400 dark:hover:text-white border border-slate-200 dark:border-zinc-800"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -1038,7 +1038,7 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
 
             <form onSubmit={handleCreateUser} className="space-y-4 text-xs">
               <div>
-                <label className="block text-[11px] uppercase font-bold text-zinc-400 mb-1">
+                <label className="block text-[11px] uppercase font-bold text-slate-600 dark:text-zinc-400 mb-1">
                   Full Name *
                 </label>
                 <input
@@ -1047,13 +1047,13 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   placeholder="e.g. Youssef El Mansouri"
-                  className="w-full bg-zinc-950 border border-zinc-800 rounded-2xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-2xl px-4 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] uppercase font-bold text-zinc-400 mb-1">
+                  <label className="block text-[11px] uppercase font-bold text-slate-600 dark:text-zinc-400 mb-1">
                     Email Address *
                   </label>
                   <input
@@ -1062,12 +1062,12 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     placeholder="y.mansouri@flotte.ma"
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-2xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-2xl px-4 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] uppercase font-bold text-zinc-400 mb-1">
+                  <label className="block text-[11px] uppercase font-bold text-slate-600 dark:text-zinc-400 mb-1">
                     Phone Number
                   </label>
                   <input
@@ -1075,20 +1075,20 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     placeholder="+212 661 23 45 67"
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-2xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-2xl px-4 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] uppercase font-bold text-zinc-400 mb-1">
+                  <label className="block text-[11px] uppercase font-bold text-slate-600 dark:text-zinc-400 mb-1">
                     Assigned Role *
                   </label>
                   <select
                     value={formData.role}
                     onChange={(e) => setFormData({ ...formData, role: e.target.value as UserRole })}
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-2xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-2xl px-4 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500"
                   >
                     <option value="super_admin">Super Admin</option>
                     <option value="support_admin">Support Admin</option>
@@ -1101,10 +1101,10 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-[11px] uppercase font-bold text-zinc-400 mb-1 flex items-center justify-between">
+                  <label className="block text-[11px] uppercase font-bold text-slate-600 dark:text-zinc-400 mb-1 flex items-center justify-between">
                     <span>Assigned Organization *</span>
                     {!isSuperAdmin && (
-                      <span className="text-[9px] text-emerald-400 font-mono font-bold flex items-center gap-1">
+                      <span className="text-[9px] text-emerald-600 dark:text-emerald-400 font-mono font-bold flex items-center gap-1">
                         <Lock className="w-2.5 h-2.5" /> Locked
                       </span>
                     )}
@@ -1113,18 +1113,18 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
                     <select
                       value={formData.organizationId}
                       onChange={(e) => setFormData({ ...formData, organizationId: e.target.value })}
-                      className="w-full bg-zinc-950 border border-purple-500/40 rounded-2xl px-4 py-2.5 text-purple-200 font-semibold focus:outline-none focus:border-purple-500"
+                      className="w-full bg-slate-50 dark:bg-zinc-950 border border-purple-500/40 rounded-2xl px-4 py-2.5 text-purple-700 dark:text-purple-200 font-semibold focus:outline-none focus:border-purple-500"
                     >
                       {organizations.map((org) => (
-                        <option key={org.id} value={org.id} className="bg-zinc-950 text-white">
+                        <option key={org.id} value={org.id} className="bg-white dark:bg-zinc-950 text-slate-900 dark:text-white">
                           {org.name} ({org.city})
                         </option>
                       ))}
                     </select>
                   ) : (
-                    <div className="w-full bg-zinc-950/80 border border-zinc-800 rounded-2xl px-4 py-2.5 text-zinc-300 font-medium flex items-center justify-between">
+                    <div className="w-full bg-slate-100 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-2xl px-4 py-2.5 text-slate-700 dark:text-zinc-300 font-medium flex items-center justify-between">
                       <span className="truncate">{currentUser?.organizationName || 'Atlas Express Logistics'}</span>
-                      <Lock className="w-3.5 h-3.5 text-zinc-500 shrink-0" />
+                      <Lock className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500 shrink-0" />
                     </div>
                   )}
                 </div>
@@ -1132,7 +1132,7 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] uppercase font-bold text-zinc-400 mb-1">
+                  <label className="block text-[11px] uppercase font-bold text-slate-600 dark:text-zinc-400 mb-1">
                     Initial Security PIN (4 Digits)
                   </label>
                   <input
@@ -1140,12 +1140,12 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
                     maxLength={6}
                     value={formData.demoPin}
                     onChange={(e) => setFormData({ ...formData, demoPin: e.target.value })}
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-2xl px-4 py-2.5 font-mono text-emerald-400 font-bold focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-2xl px-4 py-2.5 font-mono text-emerald-600 dark:text-emerald-400 font-bold focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] uppercase font-bold text-zinc-400 mb-1">
+                  <label className="block text-[11px] uppercase font-bold text-slate-600 dark:text-zinc-400 mb-1">
                     Department
                   </label>
                   <input
@@ -1153,12 +1153,12 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
                     value={formData.department}
                     onChange={(e) => setFormData({ ...formData, department: e.target.value })}
                     placeholder="Logistics / Dispatch"
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-2xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-2xl px-4 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500"
                   />
                 </div>
               </div>
 
-              <label className="flex items-center gap-2.5 pt-2 text-zinc-300 cursor-pointer">
+              <label className="flex items-center gap-2.5 pt-2 text-slate-700 dark:text-zinc-300 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={formData.twoFactorEnabled}
@@ -1172,7 +1172,7 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
                 <button
                   type="button"
                   onClick={() => setIsAddModalOpen(false)}
-                  className="px-5 py-2.5 rounded-2xl bg-zinc-900 text-zinc-400 hover:text-white font-bold"
+                  className="px-5 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-zinc-900 text-slate-600 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-white font-bold"
                 >
                   Cancel
                 </button>
@@ -1190,16 +1190,16 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
 
       {/* MODAL 2: EDIT USER */}
       {editingUser && (
-        <div className="fixed inset-0 z-[1100] bg-black/85 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-[#09090b] border border-zinc-800 rounded-[32px] w-full max-w-lg shadow-2xl p-6 sm:p-8 text-white animate-in zoom-in-95 duration-150">
-            <div className="flex justify-between items-center border-b border-zinc-800 pb-4 mb-5">
+        <div className="fixed inset-0 z-[1100] bg-slate-900/60 dark:bg-black/85 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white dark:bg-[#09090b] border border-slate-200 dark:border-zinc-800 rounded-[32px] w-full max-w-3xl shadow-2xl p-6 sm:p-8 text-slate-900 dark:text-white animate-in zoom-in-95 duration-150">
+            <div className="flex justify-between items-center border-b border-slate-200 dark:border-zinc-800 pb-4 mb-5">
               <div>
-                <h3 className="text-lg font-black text-white">Edit User: {editingUser.name}</h3>
-                <p className="text-xs text-zinc-400">Update contact data, role, or authentication PIN.</p>
+                <h3 className="text-lg font-black text-slate-900 dark:text-white">Edit User: {editingUser.name}</h3>
+                <p className="text-xs text-slate-500 dark:text-zinc-400">Update contact data, role, or authentication PIN.</p>
               </div>
               <button
                 onClick={() => setEditingUser(null)}
-                className="p-2 rounded-xl bg-zinc-900 text-zinc-400 hover:text-white border border-zinc-800"
+                className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-zinc-900 text-slate-500 hover:text-slate-800 dark:text-zinc-400 dark:hover:text-white border border-slate-200 dark:border-zinc-800"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -1207,7 +1207,7 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
 
             <form onSubmit={handleSaveEdit} className="space-y-4 text-xs">
               <div>
-                <label className="block text-[11px] uppercase font-bold text-zinc-400 mb-1">
+                <label className="block text-[11px] uppercase font-bold text-slate-600 dark:text-zinc-400 mb-1">
                   Full Name
                 </label>
                 <input
@@ -1215,13 +1215,13 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
                   required
                   value={editingUser.name}
                   onChange={(e) => setEditingUser({ ...editingUser, name: e.target.value })}
-                  className="w-full bg-zinc-950 border border-zinc-800 rounded-2xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-2xl px-4 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] uppercase font-bold text-zinc-400 mb-1">
+                  <label className="block text-[11px] uppercase font-bold text-slate-600 dark:text-zinc-400 mb-1">
                     Email Address
                   </label>
                   <input
@@ -1229,26 +1229,26 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
                     required
                     value={editingUser.email}
                     onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })}
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-2xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-2xl px-4 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] uppercase font-bold text-zinc-400 mb-1">
+                  <label className="block text-[11px] uppercase font-bold text-slate-600 dark:text-zinc-400 mb-1">
                     Phone Number
                   </label>
                   <input
                     type="tel"
                     value={editingUser.phone || ''}
                     onChange={(e) => setEditingUser({ ...editingUser, phone: e.target.value })}
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-2xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-2xl px-4 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] uppercase font-bold text-zinc-400 mb-1">
+                  <label className="block text-[11px] uppercase font-bold text-slate-600 dark:text-zinc-400 mb-1">
                     Assigned Role
                   </label>
                   <select
@@ -1256,7 +1256,7 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
                     onChange={(e) =>
                       setEditingUser({ ...editingUser, role: e.target.value as UserRole })
                     }
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-2xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-2xl px-4 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500"
                   >
                     <option value="super_admin">Super Admin</option>
                     <option value="support_admin">Support Admin</option>
@@ -1269,10 +1269,10 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-[11px] uppercase font-bold text-zinc-400 mb-1 flex items-center justify-between">
+                  <label className="block text-[11px] uppercase font-bold text-slate-600 dark:text-zinc-400 mb-1 flex items-center justify-between">
                     <span>Assigned Organization</span>
                     {!isSuperAdmin && (
-                      <span className="text-[9px] text-zinc-500 font-mono flex items-center gap-1">
+                      <span className="text-[9px] text-slate-500 dark:text-zinc-500 font-mono flex items-center gap-1">
                         <Lock className="w-2.5 h-2.5" /> Read-Only
                       </span>
                     )}
@@ -1288,18 +1288,18 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
                           organizationName: targetOrg ? targetOrg.name : editingUser.organizationName
                         });
                       }}
-                      className="w-full bg-zinc-950 border border-purple-500/40 rounded-2xl px-4 py-2.5 text-purple-200 font-semibold focus:outline-none focus:border-purple-500"
+                      className="w-full bg-slate-50 dark:bg-zinc-950 border border-purple-500/40 rounded-2xl px-4 py-2.5 text-purple-700 dark:text-purple-200 font-semibold focus:outline-none focus:border-purple-500"
                     >
                       {organizations.map((org) => (
-                        <option key={org.id} value={org.id} className="bg-zinc-950 text-white">
+                        <option key={org.id} value={org.id} className="bg-white dark:bg-zinc-950 text-slate-900 dark:text-white">
                           {org.name} ({org.city})
                         </option>
                       ))}
                     </select>
                   ) : (
-                    <div className="w-full bg-zinc-950/80 border border-zinc-800 rounded-2xl px-4 py-2.5 text-zinc-300 font-medium flex items-center justify-between">
+                    <div className="w-full bg-slate-100 dark:bg-zinc-950/80 border border-slate-200 dark:border-zinc-800 rounded-2xl px-4 py-2.5 text-slate-700 dark:text-zinc-300 font-medium flex items-center justify-between">
                       <span className="truncate">{editingUser.organizationName}</span>
-                      <Lock className="w-3.5 h-3.5 text-zinc-500 shrink-0" />
+                      <Lock className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500 shrink-0" />
                     </div>
                   )}
                 </div>
@@ -1307,7 +1307,7 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] uppercase font-bold text-zinc-400 mb-1">
+                  <label className="block text-[11px] uppercase font-bold text-slate-600 dark:text-zinc-400 mb-1">
                     Demo Security PIN
                   </label>
                   <input
@@ -1315,12 +1315,12 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
                     maxLength={6}
                     value={editingUser.demoPin || '1234'}
                     onChange={(e) => setEditingUser({ ...editingUser, demoPin: e.target.value })}
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-2xl px-4 py-2.5 font-mono text-emerald-400 font-bold focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-2xl px-4 py-2.5 font-mono text-emerald-600 dark:text-emerald-400 font-bold focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] uppercase font-bold text-zinc-400 mb-1">
+                  <label className="block text-[11px] uppercase font-bold text-slate-600 dark:text-zinc-400 mb-1">
                     Department
                   </label>
                   <input
@@ -1328,12 +1328,12 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
                     value={editingUser.department || 'Operations'}
                     onChange={(e) => setEditingUser({ ...editingUser, department: e.target.value })}
                     placeholder="e.g. Operations / Logistics"
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-2xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-2xl px-4 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500"
                   />
                 </div>
               </div>
 
-              <label className="flex items-center gap-2.5 pt-2 text-zinc-300 cursor-pointer">
+              <label className="flex items-center gap-2.5 pt-2 text-slate-700 dark:text-zinc-300 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={editingUser.twoFactorEnabled || false}
@@ -1349,7 +1349,7 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
                 <button
                   type="button"
                   onClick={() => setEditingUser(null)}
-                  className="px-5 py-2.5 rounded-2xl bg-zinc-900 text-zinc-400 hover:text-white font-bold"
+                  className="px-5 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-zinc-900 text-slate-600 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-white font-bold"
                 >
                   Cancel
                 </button>
@@ -1367,16 +1367,16 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
 
       {/* MODAL 3: DELETE CONFIRMATION */}
       {userToDelete && (
-        <div className="fixed inset-0 z-[1100] bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-[#09090b] border border-red-900/60 rounded-[32px] w-full max-w-md shadow-2xl p-6 text-white animate-in zoom-in-95 duration-150 space-y-4">
-            <div className="flex items-center gap-3 text-red-400">
-              <div className="w-10 h-10 rounded-2xl bg-red-500/20 border border-red-500/40 flex items-center justify-center">
+        <div className="fixed inset-0 z-[1100] bg-black/60 dark:bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-[#09090b] border border-red-200 dark:border-red-900/60 rounded-[32px] w-full max-w-md shadow-2xl p-6 text-slate-900 dark:text-white animate-in zoom-in-95 duration-150 space-y-4">
+            <div className="flex items-center gap-3 text-red-600 dark:text-red-400">
+              <div className="w-10 h-10 rounded-2xl bg-red-500/10 dark:bg-red-500/20 border border-red-500/30 dark:border-red-500/40 flex items-center justify-center">
                 <AlertTriangle className="w-5 h-5" />
               </div>
-              <h3 className="text-base font-black text-white">Delete User Account</h3>
+              <h3 className="text-base font-black text-slate-900 dark:text-white">Delete User Account</h3>
             </div>
 
-            <p className="text-xs text-zinc-300 leading-relaxed">
+            <p className="text-xs text-slate-600 dark:text-zinc-300 leading-relaxed">
               Are you sure you want to permanently remove <strong>{userToDelete.name}</strong> (
               {userToDelete.email})? This will immediately revoke their API credentials and session
               tokens.
@@ -1386,7 +1386,7 @@ export const UsersRbacView: React.FC<UsersRbacViewProps> = ({
               <button
                 type="button"
                 onClick={() => setUserToDelete(null)}
-                className="px-4 py-2 rounded-xl bg-zinc-900 text-zinc-400 hover:text-white text-xs font-bold"
+                className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-zinc-900 text-slate-600 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-white text-xs font-bold"
               >
                 Cancel
               </button>

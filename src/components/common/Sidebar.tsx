@@ -20,7 +20,8 @@ import {
   ChevronRight,
   Radio,
   Layers,
-  Receipt
+  Receipt,
+  BookOpen
 } from 'lucide-react';
 import { TranslationDictionary } from '../../translations/i18n';
 import { Organization, NavigationTab, User } from '../../types/fleet';
@@ -218,6 +219,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
     });
   }
 
+  // Group 4: Support & Documentation (Available to all users)
+  const helpNavItems: NavGroupItem[] = [
+    {
+      id: 'documentation',
+      label: t?.nav?.documentation || 'Documentation & Guides',
+      icon: <BookOpen className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />,
+      badge: 'FR'
+    }
+  ];
+
   const renderNavButton = (item: NavGroupItem) => {
     const isActive = activeNav === item.id;
     const isAlertsTab = item.id === 'alerts';
@@ -395,6 +406,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
               {adminNavItems.map(renderNavButton)}
             </div>
           )}
+
+          {/* Section 4: Support & Documentation (All Users) */}
+          <div className="space-y-1 pt-2 border-t border-slate-200 dark:border-zinc-900/60">
+            {!isCollapsed && (
+              <div className="px-3 pb-1.5">
+                <p className="text-[10px] font-bold tracking-wider uppercase text-slate-400 dark:text-zinc-500 font-mono">
+                  {t?.common?.help || 'Aide & Documentation'}
+                </p>
+              </div>
+            )}
+            {helpNavItems.map(renderNavButton)}
+          </div>
         </div>
 
         {/* Sidebar Footer: Active Tenant Badge & Theme Switcher */}

@@ -90,25 +90,25 @@ export const ReportVehicleSelector: React.FC<ReportVehicleSelectorProps> = ({
   };
 
   return (
-    <div className="bg-zinc-900/40 border border-zinc-800 rounded-[28px] p-5 shadow-2xl space-y-4">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-800/80 pb-3">
+    <div className="bg-white dark:bg-zinc-900/40 border border-slate-200 dark:border-zinc-800 rounded-[28px] p-5 shadow-sm dark:shadow-2xl space-y-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 dark:border-zinc-800/80 pb-3">
         <div>
           <div className="flex items-center gap-2">
-            <span className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            <span className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">
               <Car className="w-4 h-4" />
             </span>
-            <h4 className="text-xs font-black uppercase tracking-widest text-zinc-300">
+            <h4 className="text-xs font-black uppercase tracking-widest text-slate-800 dark:text-zinc-300">
               1. Fleet & Vehicle Scope
             </h4>
           </div>
-          <p className="text-[11px] text-zinc-400 mt-0.5">
+          <p className="text-[11px] text-slate-500 dark:text-zinc-400 mt-0.5">
             Audit entire fleet or isolate specific vehicles & operational divisions.
           </p>
         </div>
 
         {/* Selected Counter Pill */}
         <div className="flex items-center gap-2 self-start sm:self-auto">
-          <span className="text-[11px] font-mono font-bold px-2.5 py-1 rounded-xl bg-zinc-950 border border-zinc-700 text-emerald-400 flex items-center gap-1.5">
+          <span className="text-[11px] font-mono font-bold px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-700 text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
             {vehicleScope === 'all'
               ? `All ${vehicles.length} Vehicles`
@@ -120,14 +120,14 @@ export const ReportVehicleSelector: React.FC<ReportVehicleSelectorProps> = ({
       </div>
 
       {/* Scope Mode Switcher Tabs */}
-      <div className="grid grid-cols-3 gap-2 p-1 bg-zinc-950 rounded-2xl border border-zinc-800">
+      <div className="grid grid-cols-3 gap-2 p-1 bg-slate-100 dark:bg-zinc-950 rounded-2xl border border-slate-200 dark:border-zinc-800">
         <button
           type="button"
           onClick={() => onScopeChange('all')}
           className={`py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
             vehicleScope === 'all'
-              ? 'bg-emerald-500 text-black shadow-lg shadow-emerald-500/20 font-black'
-              : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
+              ? 'bg-emerald-500 text-black shadow-md sm:shadow-lg shadow-emerald-500/20 font-black'
+              : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-zinc-900'
           }`}
         >
           <Sparkles className="w-3.5 h-3.5" />
@@ -139,8 +139,8 @@ export const ReportVehicleSelector: React.FC<ReportVehicleSelectorProps> = ({
           onClick={() => onScopeChange('selected')}
           className={`py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
             vehicleScope === 'selected'
-              ? 'bg-emerald-500 text-black shadow-lg shadow-emerald-500/20 font-black'
-              : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
+              ? 'bg-emerald-500 text-black shadow-md sm:shadow-lg shadow-emerald-500/20 font-black'
+              : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-zinc-900'
           }`}
         >
           <CheckSquare className="w-3.5 h-3.5" />
@@ -152,8 +152,8 @@ export const ReportVehicleSelector: React.FC<ReportVehicleSelectorProps> = ({
           onClick={() => onScopeChange('fleet')}
           className={`py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
             vehicleScope === 'fleet'
-              ? 'bg-emerald-500 text-black shadow-lg shadow-emerald-500/20 font-black'
-              : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
+              ? 'bg-emerald-500 text-black shadow-md sm:shadow-lg shadow-emerald-500/20 font-black'
+              : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-zinc-900'
           }`}
         >
           <Layers className="w-3.5 h-3.5" />
@@ -163,9 +163,9 @@ export const ReportVehicleSelector: React.FC<ReportVehicleSelectorProps> = ({
 
       {/* Scope Details: ALL FLEET VIEW */}
       {vehicleScope === 'all' && (
-        <div className="p-3.5 rounded-2xl bg-zinc-950/60 border border-zinc-800/80 flex flex-wrap items-center justify-between gap-3">
-          <div className="text-xs text-zinc-300">
-            <span className="font-bold text-white">Full Consolidated Fleet Scope:</span> Generating aggregated
+        <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-zinc-950/60 border border-slate-200 dark:border-zinc-800/80 flex flex-wrap items-center justify-between gap-3">
+          <div className="text-xs text-slate-600 dark:text-zinc-300">
+            <span className="font-bold text-slate-900 dark:text-white">Full Consolidated Fleet Scope:</span> Generating aggregated
             operational metrics across all {vehicles.length} active registered vehicles.
           </div>
           <div className="flex items-center gap-2">
@@ -175,7 +175,7 @@ export const ReportVehicleSelector: React.FC<ReportVehicleSelectorProps> = ({
                 onScopeChange('selected');
                 onSelectVehicleIds(vehicles.map((v) => v.id));
               }}
-              className="text-[11px] font-bold text-emerald-400 hover:text-emerald-300 underline"
+              className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 underline"
             >
               Customize individual vehicles
             </button>
@@ -185,8 +185,8 @@ export const ReportVehicleSelector: React.FC<ReportVehicleSelectorProps> = ({
 
       {/* Scope Details: FLEET GROUP VIEW */}
       {vehicleScope === 'fleet' && (
-        <div className="space-y-2 p-3.5 rounded-2xl bg-zinc-950/60 border border-zinc-800">
-          <label className="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">
+        <div className="space-y-2 p-3.5 rounded-2xl bg-slate-50 dark:bg-zinc-950/60 border border-slate-200 dark:border-zinc-800">
+          <label className="block text-[11px] font-bold text-slate-600 dark:text-zinc-400 uppercase tracking-wider">
             Select Fleet / Operational Division
           </label>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -200,15 +200,15 @@ export const ReportVehicleSelector: React.FC<ReportVehicleSelectorProps> = ({
                   onClick={() => onFleetTagChange(group)}
                   className={`p-3 rounded-xl border text-left transition-all flex items-center justify-between ${
                     isSelected
-                      ? 'bg-emerald-500/10 border-emerald-500/50 text-white shadow-md'
-                      : 'bg-zinc-900 border-zinc-800 text-zinc-300 hover:border-zinc-700'
+                      ? 'bg-emerald-500/10 border-emerald-500/50 text-slate-900 dark:text-white shadow-md'
+                      : 'bg-white dark:bg-zinc-900 border-slate-200 dark:border-zinc-800 text-slate-700 dark:text-zinc-300 hover:border-slate-300 dark:hover:border-zinc-700'
                   }`}
                 >
                   <div>
-                    <p className="text-xs font-bold text-white">{group}</p>
-                    <p className="text-[10px] text-zinc-400">{count} vehicles assigned</p>
+                    <p className="text-xs font-bold text-slate-900 dark:text-white">{group}</p>
+                    <p className="text-[10px] text-slate-500 dark:text-zinc-400">{count} vehicles assigned</p>
                   </div>
-                  {isSelected && <Check className="w-4 h-4 text-emerald-400" />}
+                  {isSelected && <Check className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />}
                 </button>
               );
             })}
@@ -222,13 +222,13 @@ export const ReportVehicleSelector: React.FC<ReportVehicleSelectorProps> = ({
           {/* Quick Filter Bar */}
           <div className="flex flex-col sm:flex-row gap-2 items-center justify-between">
             <div className="relative w-full sm:w-64">
-              <Search className="w-3.5 h-3.5 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2" />
+              <Search className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 placeholder="Search plate, model, driver..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl pl-8 pr-3 py-1.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500"
+                className="w-full bg-white dark:bg-zinc-950 border border-slate-300 dark:border-zinc-800 rounded-xl pl-8 pr-3 py-1.5 text-xs text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-emerald-500"
               />
             </div>
 
@@ -237,21 +237,21 @@ export const ReportVehicleSelector: React.FC<ReportVehicleSelectorProps> = ({
               <button
                 type="button"
                 onClick={handleSelectAll}
-                className="px-2 py-1 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-800 font-bold"
+                className="px-2 py-1 rounded-lg bg-slate-100 dark:bg-zinc-900 hover:bg-slate-200 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-300 border border-slate-200 dark:border-zinc-800 font-bold"
               >
                 Select All ({filteredVehicles.length})
               </button>
               <button
                 type="button"
                 onClick={handleClearAll}
-                className="px-2 py-1 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-rose-400 border border-zinc-800 font-bold"
+                className="px-2 py-1 rounded-lg bg-slate-100 dark:bg-zinc-900 hover:bg-slate-200 dark:hover:bg-zinc-800 text-rose-600 dark:text-rose-400 border border-slate-200 dark:border-zinc-800 font-bold"
               >
                 Clear
               </button>
               <button
                 type="button"
                 onClick={handleSelectActiveOnly}
-                className="px-2 py-1 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-emerald-400 border border-zinc-800 font-bold"
+                className="px-2 py-1 rounded-lg bg-slate-100 dark:bg-zinc-900 hover:bg-slate-200 dark:hover:bg-zinc-800 text-emerald-700 dark:text-emerald-400 border border-slate-200 dark:border-zinc-800 font-bold"
               >
                 Active Only
               </button>
@@ -261,7 +261,7 @@ export const ReportVehicleSelector: React.FC<ReportVehicleSelectorProps> = ({
           {/* Selected Chips Strip (if any) */}
           {selectedVehicleIds.length > 0 && (
             <div className="flex items-center gap-1.5 overflow-x-auto pb-1 max-h-20 flex-wrap">
-              <span className="text-[10px] uppercase font-bold text-zinc-500 mr-1">Selected:</span>
+              <span className="text-[10px] uppercase font-bold text-slate-500 dark:text-zinc-500 mr-1">Selected:</span>
               {selectedVehicleIds.map((vId) => {
                 const veh = vehicles.find((v) => v.id === vId);
                 if (!veh) return null;
@@ -269,13 +269,13 @@ export const ReportVehicleSelector: React.FC<ReportVehicleSelectorProps> = ({
                 return (
                   <span
                     key={vId}
-                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-[11px] font-mono font-bold"
+                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 text-[11px] font-mono font-bold"
                   >
                     <span>{plate}</span>
                     <button
                       type="button"
                       onClick={() => toggleVehicle(vId)}
-                      className="hover:text-rose-400 transition-colors"
+                      className="hover:text-rose-600 dark:hover:text-rose-400 transition-colors"
                       title="Remove"
                     >
                       <X className="w-3 h-3" />
@@ -289,7 +289,7 @@ export const ReportVehicleSelector: React.FC<ReportVehicleSelectorProps> = ({
           {/* Scrollable Vehicle Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-56 overflow-y-auto pr-1">
             {filteredVehicles.length === 0 ? (
-              <div className="col-span-2 text-center py-6 text-zinc-500 text-xs">
+              <div className="col-span-2 text-center py-6 text-slate-400 dark:text-zinc-500 text-xs">
                 No vehicles match search criteria.
               </div>
             ) : (
@@ -302,40 +302,40 @@ export const ReportVehicleSelector: React.FC<ReportVehicleSelectorProps> = ({
                     onClick={() => toggleVehicle(v.id)}
                     className={`p-2.5 rounded-xl border transition-all cursor-pointer flex items-center justify-between gap-2 select-none ${
                       isChecked
-                        ? 'bg-zinc-900 border-emerald-500/60 shadow-sm'
-                        : 'bg-zinc-950/70 border-zinc-800 hover:border-zinc-700'
+                        ? 'bg-emerald-50 dark:bg-zinc-900 border-emerald-500/60 shadow-sm'
+                        : 'bg-slate-50 dark:bg-zinc-950/70 border-slate-200 dark:border-zinc-800 hover:border-slate-300 dark:hover:border-zinc-700'
                     }`}
                   >
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <div className={`p-1 rounded ${isChecked ? 'text-emerald-400' : 'text-zinc-600'}`}>
+                      <div className={`p-1 rounded ${isChecked ? 'text-emerald-700 dark:text-emerald-400' : 'text-slate-400 dark:text-zinc-600'}`}>
                         {isChecked ? (
-                          <CheckSquare className="w-4 h-4 text-emerald-400" />
+                          <CheckSquare className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />
                         ) : (
-                          <Square className="w-4 h-4 text-zinc-600" />
+                          <Square className="w-4 h-4 text-slate-400 dark:text-zinc-600" />
                         )}
                       </div>
                       <div className="min-w-0">
                         <div className="flex items-center gap-1.5">
-                          <span className="font-mono font-bold text-xs text-white truncate">
+                          <span className="font-mono font-bold text-xs text-slate-900 dark:text-white truncate">
                             {plate}
                           </span>
                           <span
                             className={`w-1.5 h-1.5 rounded-full ${
                               v.status === 'moving'
-                                ? 'bg-emerald-400'
+                                ? 'bg-emerald-500'
                                 : v.status === 'idle'
-                                ? 'bg-amber-400'
-                                : 'bg-zinc-500'
+                                ? 'bg-amber-500'
+                                : 'bg-slate-400 dark:bg-zinc-500'
                             }`}
                           />
                         </div>
-                        <p className="text-[10px] text-zinc-400 truncate">
+                        <p className="text-[10px] text-slate-500 dark:text-zinc-400 truncate">
                           {v.make} {v.model} • {v.assignedDriver?.name || 'No driver'}
                         </p>
                       </div>
                     </div>
 
-                    <span className="text-[9px] uppercase font-mono px-1.5 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-zinc-400 shrink-0">
+                    <span className="text-[9px] uppercase font-mono px-1.5 py-0.5 rounded bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-slate-600 dark:text-zinc-400 shrink-0">
                       {v.vehicleType}
                     </span>
                   </div>

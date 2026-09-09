@@ -1479,12 +1479,12 @@ export const InvoicingView: React.FC<InvoicingViewProps> = ({
           MODAL: FULL INVOICE PREVIEW & PDF ACTIONS
       ------------------------------------------------------------- */}
       {previewInvoice && (
-        <div className="fixed inset-0 z-[120] bg-black/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-4xl w-full border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden my-8 animate-in fade-in zoom-in-95">
+        <div className="fixed inset-0 z-[120] bg-slate-900/60 dark:bg-black/85 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 md:p-6 overflow-y-auto">
+          <div className="bg-white dark:bg-[#09090b] border border-slate-200 dark:border-zinc-800 rounded-[32px] w-full max-w-[95vw] xl:max-w-6xl h-[88vh] max-h-[90vh] shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             {/* Modal Header */}
-            <div className="p-5 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
+            <div className="px-6 sm:px-8 py-4 sm:py-5 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800 shrink-0">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center">
+                <div className="w-10 h-10 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-sm">
                   <Receipt className="w-5 h-5" />
                 </div>
                 <div>
@@ -1520,7 +1520,7 @@ export const InvoicingView: React.FC<InvoicingViewProps> = ({
             </div>
 
             {/* Modal Body: Rendered PDF Lookalike Canvas */}
-            <div className="p-6 lg:p-8 space-y-6 max-h-[75vh] overflow-y-auto bg-slate-50 dark:bg-slate-950/60 font-sans">
+            <div className="flex-1 p-6 lg:p-8 space-y-6 overflow-y-auto bg-slate-50 dark:bg-slate-950/60 font-sans">
               {/* Paper Canvas */}
               <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 border border-slate-200 dark:border-slate-800 shadow-lg space-y-6 text-slate-800 dark:text-slate-200">
                 {/* Header Row */}
@@ -1689,13 +1689,16 @@ export const InvoicingView: React.FC<InvoicingViewProps> = ({
           MODAL: ADD NEW FLEET CLIENT
       ------------------------------------------------------------- */}
       {isAddClientModalOpen && (
-        <div className="fixed inset-0 z-[120] bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full border border-slate-200 dark:border-slate-800 shadow-2xl p-6 space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
-              <h3 className="font-bold text-base text-slate-900 dark:text-white">Add Fleet Client Profile</h3>
+        <div className="fixed inset-0 z-[120] bg-slate-900/60 dark:bg-black/85 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white dark:bg-[#09090b] border border-slate-200 dark:border-zinc-800 rounded-[32px] max-w-2xl w-full shadow-2xl p-6 sm:p-8 space-y-5 animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-zinc-800 pb-4">
+              <div>
+                <h3 className="font-black text-lg text-slate-900 dark:text-white">Add Fleet Client Profile</h3>
+                <p className="text-xs text-slate-500 dark:text-zinc-400">Register contracted billing entity and assign baseline rate card.</p>
+              </div>
               <button
                 onClick={() => setIsAddClientModalOpen(false)}
-                className="text-slate-400 hover:text-white text-sm"
+                className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-zinc-900 text-slate-400 hover:text-white text-xs border border-slate-200 dark:border-zinc-800"
               >
                 ✕
               </button>

@@ -205,20 +205,20 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
   return (
     <div className="space-y-6">
       {/* HERO HEADER & NAVIGATION TABS */}
-      <div className="bg-zinc-900/40 rounded-[32px] p-6 border border-zinc-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-2xl">
+      <div className="bg-white dark:bg-zinc-900/40 rounded-[32px] p-6 border border-slate-200 dark:border-zinc-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-sm dark:shadow-2xl">
         <div className="border-l-2 border-emerald-500 pl-4 py-1">
           <div className="flex items-center gap-2">
-            <p className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold">
+            <p className="text-[10px] uppercase tracking-widest text-slate-500 dark:text-zinc-500 font-bold">
               Telematics Intelligence & Compliance
             </p>
-            <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-mono font-bold">
+            <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 text-[10px] font-mono font-bold">
               {reportMode === 'analytics' ? 'Recharts Intelligence Hub' : 'Report Studio Pro'}
             </span>
           </div>
-          <h2 className="text-3xl font-black italic tracking-tight text-white mt-1">
+          <h2 className="text-3xl font-black italic tracking-tight text-slate-900 dark:text-white mt-1">
             {reportMode === 'analytics' ? 'Fleet Analytics Dashboard' : t.nav.reports}
           </h2>
-          <p className="text-xs text-zinc-400 mt-1 max-w-2xl">
+          <p className="text-xs text-slate-600 dark:text-zinc-400 mt-1 max-w-2xl">
             {reportMode === 'analytics'
               ? 'Visualize vehicle utilization rates, engine idle time distribution, and daily mileage across operational vehicle groups.'
               : 'Compile rich operational audits for all fleet vehicles or customized vehicle cohorts with multi-format exports.'}
@@ -226,14 +226,14 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
         </div>
 
         {/* Mode Switcher Tabs */}
-        <div className="flex items-center gap-1.5 bg-zinc-950 p-1.5 rounded-2xl border border-zinc-800 self-stretch md:self-auto">
+        <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-zinc-950 p-1.5 rounded-2xl border border-slate-200 dark:border-zinc-800 self-stretch md:self-auto">
           <button
             type="button"
             onClick={() => setReportMode('analytics')}
             className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
               reportMode === 'analytics'
-                ? 'bg-emerald-500 text-black font-black shadow-lg shadow-emerald-500/20'
-                : 'text-zinc-400 hover:text-white'
+                ? 'bg-emerald-500 text-black font-black shadow-md shadow-emerald-500/20'
+                : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             <BarChart3 className="w-4 h-4" />
@@ -245,8 +245,8 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
             onClick={() => setReportMode('studio')}
             className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
               reportMode === 'studio'
-                ? 'bg-emerald-500 text-black font-black shadow-lg shadow-emerald-500/20'
-                : 'text-zinc-400 hover:text-white'
+                ? 'bg-emerald-500 text-black font-black shadow-md shadow-emerald-500/20'
+                : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             <FileSpreadsheet className="w-4 h-4" />

@@ -63,6 +63,7 @@ export interface TranslationDictionary {
     coreGroup: string;
     modulesGroup: string;
     adminGroup: string;
+    documentation: string;
   };
   auth: {
     signInTitle: string;
@@ -308,6 +309,12 @@ export interface TranslationDictionary {
     relayDisabledWarning: string;
     markDamage: string;
     inspectionReport: string;
+    history: string;
+    relayLogs: string;
+    completedContracts: string;
+    securityDeposits: string;
+    customerDirectory: string;
+    territoryAlerts: string;
   };
   fuelIntelligence: {
     title: string;
@@ -512,6 +519,89 @@ export interface TranslationDictionary {
     resolveAlert: string;
     assignToDriver: string;
     alertDetails: string;
+    addAlertBtn: string;
+    addAlertRuleTitle: string;
+    addAlertRuleSubtitle: string;
+    alertName: string;
+    alertNamePlaceholder: string;
+    chooseVehicle: string;
+    allVehiclesOption: string;
+    alertType: string;
+    triggerValue: string;
+    severityLevel: string;
+    notificationChannels: string;
+    audioChime: string;
+    inAppAlert: string;
+    emailDispatch: string;
+    relayCut: string;
+    operationalGuidelines: string;
+    saveAlertRule: string;
+    testTrigger: string;
+    rulesTab: string;
+    eventsTab: string;
+    canManageRules: string;
+    viewerAccessOnly: string;
+    onlyOwnerManagerNotice: string;
+    ruleActive: string;
+    ruleDisabled: string;
+    activeRulesCount: string;
+    traccarPresets: string;
+    speedingPreset: string;
+    idlePreset: string;
+    coldChainPreset: string;
+    batteryPreset: string;
+    curfewPreset: string;
+    sosPreset: string;
+    viewOnMap: string;
+    exactCoordinates: string;
+    copyCoordinates: string;
+    copied: string;
+    openInGoogleMaps: string;
+    incidentLocation: string;
+    trackLive: string;
+    recenter: string;
+    speedAtImpact: string;
+    driverDetails: string;
+  };
+  downlinkModal: {
+    title: string;
+    subtitle: string;
+    selectCommand: string;
+    cutStarter: string;
+    restoreStarter: string;
+    rebootTracker: string;
+    clearAlarm: string;
+    pollPosition: string;
+    customCommand: string;
+    safetyPrompt: string;
+    dispatchCommand: string;
+    dispatching: string;
+    commandSuccess: string;
+    channelGprs: string;
+    channelSms: string;
+    commandHistory: string;
+  };
+  roleImpersonation: {
+    bannerTitle: string;
+    previewingAs: string;
+    switchRole: string;
+    exitSandbox: string;
+  };
+  maintenanceModals: {
+    logServiceTitle: string;
+    completedOdometer: string;
+    completedDate: string;
+    serviceCenter: string;
+    technicianName: string;
+    invoiceRef: string;
+    totalCost: string;
+    saveServiceLog: string;
+    emailSettingsTitle: string;
+    emailSettingsSubtitle: string;
+    recipients: string;
+    advanceWarning: string;
+    advanceDays: string;
+    saveEmailSettings: string;
   };
   vehicleDetail: {
     title: string;
@@ -615,7 +705,8 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       settings: 'System Parameters',
       coreGroup: 'Core Fleet Telemetry',
       modulesGroup: 'Specialized Add-On Modules',
-      adminGroup: 'Tenancy & Governance'
+      adminGroup: 'Tenancy & Governance',
+      documentation: 'Documentation & User Guide'
     },
     auth: {
       signInTitle: 'Sign in to FlotteMaestro',
@@ -860,7 +951,13 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       engineResumedConfirmed: 'Relay successfully restored. Vehicle can now start.',
       relayDisabledWarning: 'Immobilization cuts starter circuit over secure downlink. Use with verified parked status.',
       markDamage: 'Click vehicle schematic to place damage tag',
-      inspectionReport: 'Generate Return Inspection Certificate'
+      inspectionReport: 'Generate Return Inspection Certificate',
+      history: 'History & Relay Audit Hub',
+      relayLogs: 'Relay & Immobilization Logs',
+      completedContracts: 'Completed Contracts Archive',
+      securityDeposits: 'Security Deposits Ledger',
+      customerDirectory: 'Renter Loyalty & Blacklist',
+      territoryAlerts: 'Boundary & Curfew Breaches'
     },
     fuelIntelligence: {
       title: 'Fuel Intelligence & Siphon Theft Detection',
@@ -1064,7 +1161,90 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       location: 'Event Coordinates',
       resolveAlert: 'Mark as Resolved',
       assignToDriver: 'Notify Assigned Driver',
-      alertDetails: 'Incident Triage Information'
+      alertDetails: 'Incident Triage Information',
+      addAlertBtn: 'Add Alert Rule',
+      addAlertRuleTitle: 'Create New Alert Rule',
+      addAlertRuleSubtitle: 'Configure Traccar-style automated triggers, vehicle targets, thresholds, and multi-channel actions',
+      alertName: 'Alert Rule Name',
+      alertNamePlaceholder: 'e.g., Highway Speed Warning (100 km/h)',
+      chooseVehicle: 'Target Vehicle Asset',
+      allVehiclesOption: 'All Organization Vehicles',
+      alertType: 'Trigger Sensor / Condition',
+      triggerValue: 'Threshold Trigger Value',
+      severityLevel: 'Alert Severity Level',
+      notificationChannels: 'Notification & Dispatch Channels',
+      audioChime: 'Cockpit Audio Chime',
+      inAppAlert: 'Live Push Notification',
+      emailDispatch: 'Email Alert Dispatch',
+      relayCut: 'Automatic Starter Relay Cut',
+      operationalGuidelines: 'Operational Instructions',
+      saveAlertRule: 'Save & Activate Rule',
+      testTrigger: 'Simulate Trigger Now',
+      rulesTab: 'Configured Alert Rules',
+      eventsTab: 'Live Incidents Stream',
+      canManageRules: 'Rule Creation & Management',
+      viewerAccessOnly: 'Read-Only Incident Stream',
+      onlyOwnerManagerNotice: 'Organization Owners and Fleet Managers can create, edit, and toggle alert rules for this fleet.',
+      ruleActive: 'Rule Active',
+      ruleDisabled: 'Rule Paused',
+      activeRulesCount: 'Active Rules',
+      traccarPresets: 'Quick Traccar Presets',
+      speedingPreset: 'Highway Overspeed Limit',
+      idlePreset: 'Stationary Engine Idle Timeout',
+      coldChainPreset: 'Cold Chain Excursion',
+      batteryPreset: 'Battery Voltage Low',
+      curfewPreset: 'Night Curfew Unauthorized Motion',
+      sosPreset: 'Emergency SOS Panic Trigger',
+      viewOnMap: 'View Position on Map',
+      exactCoordinates: 'Exact GPS Coordinates',
+      copyCoordinates: 'Copy GPS Coordinates',
+      copied: 'Copied to Clipboard!',
+      openInGoogleMaps: 'Open in External Maps',
+      incidentLocation: 'Incident Location & Telemetry',
+      trackLive: 'Track Live on Fleet Radar',
+      recenter: 'Recenter on Event',
+      speedAtImpact: 'Speed at Trigger',
+      driverDetails: 'Assigned Driver'
+    },
+    downlinkModal: {
+      title: 'Telematics Downlink & Immobilizer Terminal',
+      subtitle: 'Direct GPRS/SMS command execution to hardware GPS tracker',
+      selectCommand: 'Select Downlink Command Preset',
+      cutStarter: 'Cut Starter Motor Relay (Immobilize)',
+      restoreStarter: 'Restore Starter Power',
+      rebootTracker: 'Reboot Hardware GPS Tracker',
+      clearAlarm: 'Clear Active Tracker Alarm',
+      pollPosition: 'Poll High-Frequency GPS Fix',
+      customCommand: 'Custom Terminal Payload',
+      safetyPrompt: 'Confirm safety protocol: Vehicle is stationary or safe for remote relay action.',
+      dispatchCommand: 'Dispatch Command',
+      dispatching: 'Transmitting packet...',
+      commandSuccess: 'Command acknowledged by tracker via GPRS',
+      channelGprs: 'GPRS / TCP Socket (Instant)',
+      channelSms: 'GSM SMS Fallback',
+      commandHistory: 'Transmission Log'
+    },
+    roleImpersonation: {
+      bannerTitle: 'RBAC Simulation Sandbox Active',
+      previewingAs: 'You are previewing permissions as',
+      switchRole: 'Switch Preview Role',
+      exitSandbox: 'Exit Sandbox'
+    },
+    maintenanceModals: {
+      logServiceTitle: 'Log Completed Maintenance Service',
+      completedOdometer: 'Odometer at Service (km)',
+      completedDate: 'Completion Date',
+      serviceCenter: 'Workshop / Service Center',
+      technicianName: 'Master Technician Name',
+      invoiceRef: 'Invoice / PO Reference',
+      totalCost: 'Total Service Cost',
+      saveServiceLog: 'Confirm & Reset Interval',
+      emailSettingsTitle: 'Fleet Maintenance Email Notifications',
+      emailSettingsSubtitle: 'Configure automated maintenance reminders, threshold warnings, and recipient list',
+      recipients: 'Notification Email Addresses',
+      advanceWarning: 'Advance Warning Distance (km)',
+      advanceDays: 'Advance Warning Time (Days)',
+      saveEmailSettings: 'Save Notification Settings'
     },
     vehicleDetail: {
       title: 'Vehicle Inspector & CAN-Bus Telemetry',
@@ -1166,7 +1346,8 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       settings: 'Paramètres Système',
       coreGroup: 'Télématique Principale',
       modulesGroup: 'Modules Métiers Spécialisés',
-      adminGroup: 'Gouvernance & Multi-Tenancy'
+      adminGroup: 'Gouvernance & Multi-Tenancy',
+      documentation: 'Documentation & Guide Complet'
     },
     auth: {
       signInTitle: 'Connexion à FlotteMaestro',
@@ -1411,7 +1592,13 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       engineResumedConfirmed: 'Relais rétabli avec succès. Le véhicule peut démarrer.',
       relayDisabledWarning: 'La coupure moteur s’effectue par liaison descendante sécurisée. À utiliser véhicule stationné.',
       markDamage: 'Cliquez sur le schéma pour placer un repère de rayure ou choc',
-      inspectionReport: 'Générer le procès-verbal de restitution'
+      inspectionReport: 'Générer le procès-verbal de restitution',
+      history: 'Historique & Journal Relais',
+      relayLogs: 'Journal des Coupures & Rétablissements Relais',
+      completedContracts: 'Archives des Contrats Clôturés',
+      securityDeposits: 'Grand Livre des Cautions & Dépôts',
+      customerDirectory: 'Fichier Clients, Fidélité & Blacklist',
+      territoryAlerts: 'Infractions de Zone & Couvre-Feu'
     },
     fuelIntelligence: {
       title: 'Intelligence Carburant & Détection de Siphonnage',
@@ -1615,7 +1802,90 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       location: 'Coordonnées de l’incident',
       resolveAlert: 'Marquer comme résolu',
       assignToDriver: 'Notifier le conducteur',
-      alertDetails: 'Fiche d’incident détaillée'
+      alertDetails: 'Fiche d’incident détaillée',
+      addAlertBtn: 'Ajouter une règle d’alerte',
+      addAlertRuleTitle: 'Créer une nouvelle règle d’alerte',
+      addAlertRuleSubtitle: 'Configurez des déclencheurs automatisés style Traccar, véhicules cibles, seuils et actions multi-canaux',
+      alertName: 'Nom de la règle d’alerte',
+      alertNamePlaceholder: 'ex: Alerte Vitesse Autoroute (>100 km/h)',
+      chooseVehicle: 'Véhicule concerné',
+      allVehiclesOption: 'Tous les véhicules de l’organisation',
+      alertType: 'Capteur / Type d’événement',
+      triggerValue: 'Valeur seuil de déclenchement',
+      severityLevel: 'Niveau de gravité',
+      notificationChannels: 'Canaux de notification & d’action',
+      audioChime: 'Alerte sonore cockpit',
+      inAppAlert: 'Notification push en direct',
+      emailDispatch: 'Envoi d’e-mail immédiat',
+      relayCut: 'Coupure démarreur relais automatique',
+      operationalGuidelines: 'Consignes opérationnelles',
+      saveAlertRule: 'Enregistrer & Activer l’alerte',
+      testTrigger: 'Simuler le déclenchement',
+      rulesTab: 'Règles d’alertes configurées',
+      eventsTab: 'Flux des incidents en direct',
+      canManageRules: 'Gestion & Création des alertes',
+      viewerAccessOnly: 'Accès lecture seule aux alertes',
+      onlyOwnerManagerNotice: 'Les propriétaires d’organisation et gestionnaires de flotte peuvent configurer et modifier les règles d’alertes.',
+      ruleActive: 'Règle active',
+      ruleDisabled: 'Règle en pause',
+      activeRulesCount: 'Règles actives',
+      traccarPresets: 'Modèles rapides Traccar',
+      speedingPreset: 'Excès de vitesse autoroute',
+      idlePreset: 'Moteur au ralenti prolongé',
+      coldChainPreset: 'Excursion chaîne du froid',
+      batteryPreset: 'Tension batterie faible',
+      curfewPreset: 'Mouvement non autorisé (Couvre-feu)',
+      sosPreset: 'Bouton d’urgence SOS',
+      viewOnMap: 'Voir la position sur la carte',
+      exactCoordinates: 'Coordonnées GPS exactes',
+      copyCoordinates: 'Copier les coordonnées GPS',
+      copied: 'Copié dans le presse-papier !',
+      openInGoogleMaps: 'Ouvrir dans Google Maps',
+      incidentLocation: 'Localisation de l’incident & Télémétrie',
+      trackLive: 'Suivre en direct sur le radar',
+      recenter: 'Recentrer sur l’incident',
+      speedAtImpact: 'Vitesse lors du déclenchement',
+      driverDetails: 'Conducteur assigné'
+    },
+    downlinkModal: {
+      title: 'Console Télématique & Anti-Démarrage',
+      subtitle: 'Envoi direct de commandes GPRS/SMS vers la balise GPS matérielle',
+      selectCommand: 'Sélectionner une commande prédéfinie',
+      cutStarter: 'Couper le démarreur (Immobilisation)',
+      restoreStarter: 'Rétablir l’alimentation du démarreur',
+      rebootTracker: 'Redémarrer la balise GPS',
+      clearAlarm: 'Acquitter l’alarme active de la balise',
+      pollPosition: 'Forcer une position GPS haute fréquence',
+      customCommand: 'Commande terminal personnalisée',
+      safetyPrompt: 'Confirmez le protocole de sécurité : Le véhicule est à l’arrêt ou sécurisé.',
+      dispatchCommand: 'Transmettre la commande',
+      dispatching: 'Transmission du paquet en cours...',
+      commandSuccess: 'Commande acquittée par la balise via GPRS',
+      channelGprs: 'Socket TCP / GPRS (Instantané)',
+      channelSms: 'SMS GSM de secours',
+      commandHistory: 'Historique des transmissions'
+    },
+    roleImpersonation: {
+      bannerTitle: 'Bac à sable de simulation RBAC actif',
+      previewingAs: 'Vous prévisualisez les permissions en tant que',
+      switchRole: 'Changer de profil simulé',
+      exitSandbox: 'Quitter la simulation'
+    },
+    maintenanceModals: {
+      logServiceTitle: 'Enregistrer un entretien effectué',
+      completedOdometer: 'Kilométrage lors de l’entretien (km)',
+      completedDate: 'Date de réalisation',
+      serviceCenter: 'Atelier / Garage prestataire',
+      technicianName: 'Nom du technicien',
+      invoiceRef: 'N° Facture / Bon de commande',
+      totalCost: 'Coût total de l’intervention',
+      saveServiceLog: 'Valider et réinitialiser l’intervalle',
+      emailSettingsTitle: 'Notifications d’entretien par e-mail',
+      emailSettingsSubtitle: 'Configurez les alertes préventives, seuils kilométriques et destinataires',
+      recipients: 'Adresses e-mail de notification',
+      advanceWarning: 'Distance d’alerte préalable (km)',
+      advanceDays: 'Délai d’alerte préalable (Jours)',
+      saveEmailSettings: 'Enregistrer les paramètres de notification'
     },
     vehicleDetail: {
       title: 'Inspecteur Véhicule & Télémétrie CAN-Bus',
@@ -1717,7 +1987,8 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       settings: 'إعدادات النظام',
       coreGroup: 'التتبع والتيلومتري الأساسي',
       modulesGroup: 'الوحدات الميدانية التخصصية',
-      adminGroup: 'إدارة النظام والشركات'
+      adminGroup: 'إدارة النظام والشركات',
+      documentation: 'دليل الاستخدام والتوثيق'
     },
     auth: {
       signInTitle: 'تسجيل الدخول إلى فلوت مايسترو',
@@ -1962,7 +2233,13 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       engineResumedConfirmed: 'تمت استعادة مرحل المحرك. يمكن تشغيل المركبة الآن.',
       relayDisabledWarning: 'يتم إرسال أمر القطع عبر قناة اتصال آمنة. يرجى التأكد من توقف المركبة.',
       markDamage: 'انقر على مخطط السيارة لتحديد موضع الخدش أو الضرر',
-      inspectionReport: 'استخراج محضر الاسترجاع والفحص'
+      inspectionReport: 'استخراج محضر الاسترجاع والفحص',
+      history: 'سجل العمليات وأرشيف المرحل',
+      relayLogs: 'سجل أوامر قطع واستعادة المحرك',
+      completedContracts: 'أرشيف العقود المنتهية',
+      securityDeposits: 'دفتر الودائع والضمان المالي',
+      customerDirectory: 'دليل المستأجرين والقائمة السوداء',
+      territoryAlerts: 'تجاوزات النطاق الجغرافي وحظر التجوال'
     },
     fuelIntelligence: {
       title: 'إدارة ومراقبة الوقود وكشف السرقات',
@@ -2166,7 +2443,90 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       location: 'إحداثيات موقع الحدث',
       resolveAlert: 'تحديد كتمت المعالجة',
       assignToDriver: 'إرسال إشعار للسائق المعين',
-      alertDetails: 'تفاصيل ملف الحادثة'
+      alertDetails: 'تفاصيل ملف الحادثة',
+      addAlertBtn: 'إضافة قاعدة تنبيه جديدة',
+      addAlertRuleTitle: 'إنشاء قاعدة تنبيه تلقائية',
+      addAlertRuleSubtitle: 'تكوين مشغلات أوتوماتيكية بنمط Traccar، تحديد المركبات المستهدفة، القيم الحرجة والقنوات',
+      alertName: 'اسم قاعدة التنبيه',
+      alertNamePlaceholder: 'مثال: تنبيه السرعة الزائدة على الطريق السريع (>100 كم/س)',
+      chooseVehicle: 'المركبة المستهدفة',
+      allVehiclesOption: 'جميع مركبات المؤسسة',
+      alertType: 'نوع الحساس / الحدث المشغل',
+      triggerValue: 'القيمة الحرجة لإطلاق التنبيه',
+      severityLevel: 'مستوى الخطورة والأولوية',
+      notificationChannels: 'قنوات الإشعار والإجراء',
+      audioChime: 'جرس صوتي في قمرة القيادة',
+      inAppAlert: 'إشعار فوري داخل المنصة',
+      emailDispatch: 'إرسال بريد إلكتروني فوري',
+      relayCut: 'قطع تشغيل المحرك التلقائي بالمرحل',
+      operationalGuidelines: 'التعليمات والإرشادات التشغيلية',
+      saveAlertRule: 'حفظ وتفعيل التنبيه',
+      testTrigger: 'تجربة إطلاق التنبيه الآن',
+      rulesTab: 'قواعد التنبيه المضبوطة',
+      eventsTab: 'سجل الحوادث والتنبيهات المباشرة',
+      canManageRules: 'إدارة وإنشاء قواعد التنبيهات',
+      viewerAccessOnly: 'عرض التنبيهات (للقراءة فقط)',
+      onlyOwnerManagerNotice: 'يحق فقط لمالك المؤسسة ومدير الأسطول إضافة وتعديل قواعد التنبيهات.',
+      ruleActive: 'القاعدة نشطة',
+      ruleDisabled: 'القاعدة معطلة مؤقتاً',
+      activeRulesCount: 'القواعد النشطة',
+      traccarPresets: 'نماذج تنبيهات Traccar الجاهزة',
+      speedingPreset: 'تجاوز السرعة القصوى',
+      idlePreset: 'دوران المحرك وهو متوقف لفترة طويلة',
+      coldChainPreset: 'ارتفاع حرارة شاحنة التبريد',
+      batteryPreset: 'انخفاض جهد بطارية المركبة',
+      curfewPreset: 'حركة غير مصرح بها (حظر ليلي)',
+      sosPreset: 'زر الطوارئ والاستغاثة SOS',
+      viewOnMap: 'عرض الموقع على الخريطة',
+      exactCoordinates: 'إحداثيات GPS الدقيقة',
+      copyCoordinates: 'نسخ إحداثيات GPS',
+      copied: 'تم النسخ إلى الحافظة!',
+      openInGoogleMaps: 'فتح في خرائط جوجل',
+      incidentLocation: 'موقع الحادثة والبيانات التليمتريّة',
+      trackLive: 'متابعة حية على رادار الأسطول',
+      recenter: 'إعادة التوسيط على الحدث',
+      speedAtImpact: 'السرعة وقت إطلاق التنبيه',
+      driverDetails: 'السائق المعين'
+    },
+    downlinkModal: {
+      title: 'وحدة التحكم بالأوامر ومنع التشغيل',
+      subtitle: 'إرسال مباشر لأوامر GPRS و SMS لأجهزة التتبع GPS بالمركبات',
+      selectCommand: 'اختر نوع الأمر التليمتري',
+      cutStarter: 'قطع محرك المركبة (منع التشغيل والإيقاف)',
+      restoreStarter: 'إعادة تفعيل مرحل التشغيل',
+      rebootTracker: 'إعادة تشغيل جهاز التتبع',
+      clearAlarm: 'مسح وإلغاء الإنذار النشط بالجهاز',
+      pollPosition: 'طلب تحديد موقع فوري عالي الدقة',
+      customCommand: 'أمر مخصص لوحدة التحكم',
+      safetyPrompt: 'تأكيد بروتوكول السلامة: المركبة متوقفة في مكان آمن لقطع المحرك.',
+      dispatchCommand: 'إرسال الأمر الآن',
+      dispatching: 'جاري إرسال حزمة البيانات...',
+      commandSuccess: 'تم استلام وتأكيد الأمر من جهاز التتبع عبر GPRS',
+      channelGprs: 'اتصال فوري GPRS / TCP',
+      channelSms: 'رسالة قصيرة SMS احتياطية',
+      commandHistory: 'سجل الأوامر المرسلة'
+    },
+    roleImpersonation: {
+      bannerTitle: 'بيئة محاكاة الصلاحيات (RBAC Sandbox) نشطة',
+      previewingAs: 'أنت تعاين النظام بصلاحيات دور',
+      switchRole: 'تبديل الدور التجريبي',
+      exitSandbox: 'إنهاء المحاكاة'
+    },
+    maintenanceModals: {
+      logServiceTitle: 'تسجيل عملية صيانة منجزة',
+      completedOdometer: 'العداد عند الصيانة (كم)',
+      completedDate: 'تاريخ الإنجاز',
+      serviceCenter: 'الورشة / مركز الصيانة',
+      technicianName: 'اسم الفني المختص',
+      invoiceRef: 'رقم الفاتورة / أمر العمل',
+      totalCost: 'التكلفة الإجمالية للصيانة',
+      saveServiceLog: 'تأكيد وإعادة ضبط دورة الصيانة',
+      emailSettingsTitle: 'إشعارات الصيانة عبر البريد الإلكتروني',
+      emailSettingsSubtitle: 'تكوين التنبيهات المسبقة، المسافات الحرجة وقائمة المستلمين',
+      recipients: 'عناوين البريد الإلكتروني للإشعار',
+      advanceWarning: 'مسافة التنبيه المسبق (كم)',
+      advanceDays: 'مدة التنبيه المسبق (أيام)',
+      saveEmailSettings: 'حفظ إعدادات الإشعارات'
     },
     vehicleDetail: {
       title: 'فحص تفاصيل المركبة وتيلومتري CAN-Bus',

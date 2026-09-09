@@ -84,6 +84,14 @@ class AlertAudioSynthesizer {
     }
   }
 
+  public playAlert(severity?: string) {
+    if (severity === 'critical') {
+      this.playCriticalChime();
+    } else {
+      this.playInfoChime();
+    }
+  }
+
   public toggleMute(): boolean {
     this.isMuted = !this.isMuted;
     return this.isMuted;

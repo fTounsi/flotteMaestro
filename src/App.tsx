@@ -6,6 +6,7 @@ import {
   Tracker,
   Geofence,
   Alert,
+  AlertRule,
   FleetReport,
   Organization,
   User,
@@ -20,6 +21,7 @@ import {
   INITIAL_TRACKERS,
   INITIAL_GEOFENCES,
   INITIAL_ALERTS,
+  INITIAL_ALERT_RULES,
   INITIAL_REPORTS,
   INITIAL_USERS,
   INITIAL_TRIPS
@@ -55,17 +57,37 @@ import { LiveShareView } from './components/web/LiveShareView';
 import { MaintenanceView } from './components/web/MaintenanceView';
 import { InvoicingView } from './components/web/InvoicingView';
 import { SystemSettingsView } from './components/web/SystemSettingsView';
+import { DocumentationView } from './components/web/DocumentationView';
 import { SystemParametersConfig } from './types/serverConfig';
 import { INITIAL_SYSTEM_CONFIG } from './data/serverConfigData';
 
 // API & Mobile Components
 import { RestApiExplorer } from './components/api/RestApiExplorer';
 import { MobileAppFrame } from './components/mobile/MobileAppFrame';
+import { StandaloneMobileApp } from './components/mobile/StandaloneMobileApp';
 import { WebLoginView } from './components/auth/WebLoginView';
+
+const getInitialAppMode = (): AppMode => {
+  if (typeof window !== 'undefined') {
+    const path = window.location.pathname;
+    const hash = window.location.hash;
+    const params = new URLSearchParams(window.location.search);
+    if (
+      path.startsWith('/mobile') ||
+      path === '/m' ||
+      hash === '#mobile' ||
+      params.get('view') === 'mobile' ||
+      params.get('mode') === 'mobile'
+    ) {
+      return 'mobile_standalone';
+    }
+  }
+  return 'web';
+};
 
 export function App() {
   // Application Top-level State
-  const [appMode, setAppMode] = useState<AppMode>('web');
+  const [appMode, setAppMode] = useState<AppMode>(getInitialAppMode());
   const [activeNav, setActiveNav] = useState<NavigationTab>('live_tracking');
   const [currentLang, setCurrentLang] = useState<Language>('en');
 
@@ -82,6 +104,7 @@ export function App() {
   const [trackers, setTrackers] = useState<Tracker[]>(INITIAL_TRACKERS);
   const [geofences, setGeofences] = useState<Geofence[]>(INITIAL_GEOFENCES);
   const [alerts, setAlerts] = useState<Alert[]>(INITIAL_ALERTS);
+  const [alertRules, setAlertRules] = useState<AlertRule[]>(INITIAL_ALERT_RULES);
   const [reports, setReports] = useState<FleetReport[]>(INITIAL_REPORTS);
   const [users, setUsers] = useState<User[]>(INITIAL_USERS);
   const [trips, setTrips] = useState<Trip[]>(INITIAL_TRIPS);
@@ -197,11 +220,12 @@ export function App() {
       licensePlate: newVehData.licensePlate || '12345-A-1',
       vin: newVehData.vin || 'VF1MA00030192834',
       color: newVehData.color || '#0284c7',
+      imageUrl: newVehData.imageUrl,
       status: 'stopped',
       odometer: 0,
       dailyDistanceKm: 0,
-      fuelType: 'diesel',
-      engineInfo: 'Euro 6 Eco Fleet',
+      fuelType: newVehData.fuelType || 'diesel',
+      engineInfo: newVehData.engineInfo || 'Euro 6 Eco Fleet',
       fuelLevelPercent: 100,
       trackerId: newVehData.trackerId,
       trackerImei: newVehData.trackerImei,
@@ -344,6 +368,52 @@ export function App() {
   // Mark All Alerts Read
   const handleMarkAllAlertsRead = () => {
     setAlerts((prev) => prev.map((a) => ({ ...a, isRead: true })));
+  };
+
+  // Alert Rules Handlers
+  const handleAddAlertRule = (newRule: AlertRule, triggerNow?: boolean) => {
+    setAlertRules((prev) => [newRule, ...prev]);
+    if (triggerNow) {
+      handleTriggerAlertRule(newRule);
+    }
+  };
+
+  const handleToggleAlertRule = (ruleId: string, enabled: boolean) => {
+    setAlertRules((prev) => prev.map((r) => (r.id === ruleId ? { ...r, enabled } : r)));
+  };
+
+  const handleDeleteAlertRule = (ruleId: string) => {
+    setAlertRules((prev) => prev.filter((r) => r.id !== ruleId));
+  };
+
+  const handleTriggerAlertRule = (rule: AlertRule) => {
+    const targetVeh = vehicles.find((v) => v.id === rule.vehicleId) || vehicles[0];
+    const newAlert: Alert = {
+      id: `alt_${Date.now()}`,
+      organizationId: selectedOrgId,
+      vehicleId: targetVeh?.id || 'v1',
+      vehiclePlate: targetVeh?.licensePlate || 'AA-100-AB',
+      vehicleName: targetVeh ? `${targetVeh.make} ${targetVeh.model}` : 'Fleet Unit',
+      trackerId: targetVeh?.trackerId || 'trk_01',
+      type: rule.type,
+      title: `Triggered: ${rule.name}`,
+      description: `Telemetry event matching rule condition [${rule.type}: ${rule.value} ${rule.unit || ''}].`,
+      severity: rule.severity,
+      latitude: targetVeh?.latestPosition?.latitude ?? 48.8566,
+      longitude: targetVeh?.latestPosition?.longitude ?? 2.3522,
+      address: targetVeh?.latestPosition?.address || 'Paris, France',
+      speed: targetVeh?.latestPosition?.speed ?? 85,
+      triggerValue: rule.value,
+      thresholdValue: rule.value,
+      isRead: false,
+      triageStatus: 'open',
+      ruleId: rule.id,
+      alertName: rule.name,
+      createdAt: new Date().toISOString()
+    };
+
+    setAlerts((prev) => [newAlert, ...prev]);
+    alertSound.playAlert(rule.severity);
   };
 
   // Generate Report
@@ -510,6 +580,70 @@ export function App() {
 
   const unreadAlertsCount = alerts.filter((a) => !a.isRead).length;
 
+  // URL Sync for Standalone Mobile Routing
+  useEffect(() => {
+    const handleUrlChange = () => {
+      const mode = getInitialAppMode();
+      setAppMode(mode);
+    };
+    window.addEventListener('popstate', handleUrlChange);
+    window.addEventListener('hashchange', handleUrlChange);
+    return () => {
+      window.removeEventListener('popstate', handleUrlChange);
+      window.removeEventListener('hashchange', handleUrlChange);
+    };
+  }, []);
+
+  const handleModeChange = (mode: AppMode) => {
+    setAppMode(mode);
+    if (mode === 'mobile_standalone') {
+      try {
+        window.history.pushState({}, '', '/mobile');
+      } catch (e) {
+        // Fallback for sandboxed frames
+        window.location.hash = '#mobile';
+      }
+    } else if (window.location.pathname.startsWith('/mobile') || window.location.hash === '#mobile') {
+      try {
+        window.history.pushState({}, '', '/');
+      } catch (e) {
+        window.location.hash = '';
+      }
+    }
+  };
+
+  // 0. STANDALONE MOBILE APP (PWA / CAPACITOR / PHONE VIEWPORT)
+  if (appMode === 'mobile_standalone') {
+    return (
+      <div dir={currentLang === 'ar' ? 'rtl' : 'ltr'}>
+        <StandaloneMobileApp
+          vehicles={vehicles}
+          geofences={geofences}
+          alerts={alerts}
+          reports={reports}
+          trips={trips}
+          organizations={organizations}
+          selectedOrgId={selectedOrgId}
+          onSelectOrg={setSelectedOrgId}
+          users={users}
+          currentUser={currentUser}
+          isAuthenticated={isAuthenticated}
+          onLogin={handleLogin}
+          onLogout={handleLogout}
+          currentLang={currentLang}
+          onLangChange={setCurrentLang}
+          onSwitchToWebConsole={() => handleModeChange('web')}
+          onToggleRelay={handleToggleRelay}
+          onUpdateAlert={(updatedAlert) => {
+            setAlerts((prev) => prev.map((a) => (a.id === updatedAlert.id ? updatedAlert : a)));
+          }}
+          onMarkAlertAsRead={handleMarkAlertAsRead}
+          t={t}
+        />
+      </div>
+    );
+  }
+
   return (
     <div
       dir={currentLang === 'ar' ? 'rtl' : 'ltr'}
@@ -518,7 +652,7 @@ export function App() {
       {/* Top Application Header with Mode Switcher, Tenant Dropdown & User Auth Controls */}
       <Header
         appMode={appMode}
-        onModeChange={setAppMode}
+        onModeChange={handleModeChange}
         activeNav={activeNav}
         onNavChange={setActiveNav}
         organizations={organizations}
@@ -625,12 +759,27 @@ export function App() {
               {activeNav === 'alerts' && (
                 <AlertsView
                   alerts={alerts}
+                  alertRules={alertRules}
+                  vehicles={vehicles}
                   users={users}
                   currentUser={effectiveUser}
+                  currentOrgName={activeOrg?.name}
                   onMarkAsRead={handleMarkAlertAsRead}
                   onUpdateAlert={(updatedAlert) =>
                     setAlerts((prev) => prev.map((a) => (a.id === updatedAlert.id ? updatedAlert : a)))
                   }
+                  onDeleteAlert={(alertId) => setAlerts((prev) => prev.filter((a) => a.id !== alertId))}
+                  onAddAlertRule={handleAddAlertRule}
+                  onToggleAlertRule={handleToggleAlertRule}
+                  onDeleteAlertRule={handleDeleteAlertRule}
+                  onTriggerAlertRule={handleTriggerAlertRule}
+                  onSelectVehicle={(veh) => {
+                    setSelectedVehicleForDetail(veh);
+                    setActiveNav('live_tracking');
+                  }}
+                  onOpenDownlinkTerminal={(veh) => {
+                    setVehicleForCommand(veh);
+                  }}
                   onClearAll={handleMarkAllAlertsRead}
                   t={t}
                 />
@@ -727,6 +876,7 @@ export function App() {
                   onUpdateOrg={handleUpdateOrganization}
                   onDeleteOrg={handleDeleteOrganization}
                   onToggleModule={handleToggleModule}
+                  onNavigateToTab={setActiveNav}
                   t={t}
                 />
               )}
@@ -751,6 +901,14 @@ export function App() {
                 <SystemSettingsView
                   initialConfig={systemConfig}
                   onSaveConfig={(newConfig) => setSystemConfig(newConfig)}
+                />
+              )}
+
+              {/* Comprehensive French-First User Documentation & Guides */}
+              {activeNav === 'documentation' && (
+                <DocumentationView
+                  onNavigateToTab={(tab) => setActiveNav(tab)}
+                  currentUser={effectiveUser}
                 />
               )}
             </div>
@@ -800,6 +958,11 @@ export function App() {
               onLogout={handleLogout}
               currentLang={currentLang}
               onLangChange={setCurrentLang}
+              onOpenStandalone={() => handleModeChange('mobile_standalone')}
+              onUpdateAlert={(updatedAlert) => {
+                setAlerts((prev) => prev.map((a) => (a.id === updatedAlert.id ? updatedAlert : a)));
+              }}
+              onMarkAlertAsRead={handleMarkAlertAsRead}
               t={t}
             />
           )}

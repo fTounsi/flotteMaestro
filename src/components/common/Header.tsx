@@ -29,7 +29,8 @@ import {
   Sliders,
   PanelLeftClose,
   PanelLeftOpen,
-  Menu
+  Menu,
+  BookOpen
 } from 'lucide-react';
 import { Language, TranslationDictionary } from '../../translations/i18n';
 import { Organization, AppMode, NavigationTab, User } from '../../types/fleet';
@@ -179,7 +180,7 @@ export const Header: React.FC<HeaderProps> = ({
           })()}
         </div>
 
-        {/* Mode Switcher Tabs (Web / Mobile / API) */}
+        {/* Mode Switcher Tabs (Web / Mobile App / API) */}
         <div className="flex items-center bg-slate-100 dark:bg-zinc-900/60 p-1.5 rounded-2xl border border-slate-200 dark:border-zinc-800">
           <button
             onClick={() => onModeChange('web')}
@@ -192,17 +193,32 @@ export const Header: React.FC<HeaderProps> = ({
             <Layers className="w-3.5 h-3.5" />
             <span>{t.modes.webAdmin}</span>
           </button>
+          
+          <button
+            onClick={() => onModeChange('mobile_standalone')}
+            title="Open Dedicated Mobile App View (Optimized for Smartphones)"
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+              appMode === 'mobile_standalone'
+                ? 'bg-emerald-600 text-white shadow-xs'
+                : 'text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10'
+            }`}
+          >
+            <Smartphone className="w-3.5 h-3.5" />
+            <span>Mobile App</span>
+          </button>
+
           <button
             onClick={() => onModeChange('mobile')}
-            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+            title="Open Device Frame Simulator (iPhone / Pixel)"
+            className={`hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
               appMode === 'mobile'
                 ? 'bg-white dark:bg-zinc-800 text-slate-900 dark:text-white shadow-xs'
                 : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
-            <Smartphone className="w-3.5 h-3.5" />
-            <span>{t.modes.mobileApp}</span>
+            <span>Simulator</span>
           </button>
+
           <button
             onClick={() => onModeChange('api')}
             className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
@@ -252,6 +268,20 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <div className={`h-2 w-2 rounded-full ${isSimulating ? 'bg-emerald-500 shadow-[0_0_6px_#10b981] animate-ping' : 'bg-slate-400 dark:bg-zinc-600'}`} />
             <span>{isSimulating ? 'GPS STREAM.ACTIVE' : 'STREAM.PAUSED'}</span>
+          </button>
+
+          {/* Documentation & User Guide button */}
+          <button
+            onClick={() => onNavChange('documentation')}
+            className={`hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-2xl border text-xs font-bold transition-all ${
+              activeNav === 'documentation'
+                ? 'bg-emerald-500 text-slate-950 border-emerald-400 shadow-sm'
+                : 'bg-slate-100 hover:bg-slate-200 border-slate-200 text-slate-700 hover:text-slate-900 dark:bg-zinc-900/60 dark:hover:bg-zinc-800 dark:border-zinc-800 dark:text-zinc-300 dark:hover:text-white'
+            }`}
+            title="Guide Complet & Documentation (Français)"
+          >
+            <BookOpen className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+            <span className="hidden lg:inline">{t?.nav?.documentation || 'Documentation'}</span>
           </button>
 
           {/* Alerts Bell */}
